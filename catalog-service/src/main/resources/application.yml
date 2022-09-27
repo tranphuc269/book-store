@@ -1,0 +1,57 @@
+server:
+  port: ${port:9004}
+
+security:
+  jwt:
+    public-key: classpath:jwt-signing-public-key.txt
+
+spring:
+  application:
+    name: catalog-service
+  zipkin:
+    base-url: http://127.0.0.1:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+  flyway:
+    table: catalog_service_flyway_history
+    baseline-on-migrate: true
+    baseline-version: 1.0
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  hateoas:
+    use-hal-as-default-json-media-type: false
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database: mysql
+    open-in-view: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: true
+        format_sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/catalogservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: Jerrytran97@
+
+logging:
+  level:
+    com.bookstore.catalogservice.*: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, busrefresh
+
+  security:
+    enabled: false
