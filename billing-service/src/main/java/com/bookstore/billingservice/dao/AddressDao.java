@@ -1,0 +1,52 @@
+package com.bookstore.billingservice.dao;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
+
+import com.bookstore.billingservice.common.util.DateAudit;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.stereotype.Service;
+
+
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "addresses")
+@Builder
+public class AddressDao extends DateAudit {
+    
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "address_id", updatable = false, nullable = false)
+    private String addressId;
+    
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+    
+    @Column(name = "user_name", nullable = false)
+    private String userName;
+    
+    @Column(name = "phone_number")
+    private String phoneNumber;
+    
+    @Column(name = "city", nullable = false)
+    private String city;
+
+    @Column(name = "district", nullable = false)
+    private String district;
+    
+    @Column(name = "province", nullable = false)
+    private String province;
+
+    @Column(name = "detail")
+    private String detail;
+}
