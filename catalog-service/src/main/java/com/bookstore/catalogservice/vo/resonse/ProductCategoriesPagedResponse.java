@@ -1,6 +1,6 @@
 package com.bookstore.catalogservice.vo.resonse;
 
-import com.bookstore.catalogservice.dao.ProductCategoryDAO;
+import com.bookstore.catalogservice.dao.CategoryDAO;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 @Data
 public class ProductCategoriesPagedResponse {
     
-    Page<ProductCategoryDAO> page;
+    Page<CategoryDAO> page;
     Map<String, String> _links = new HashMap<>();
     
 }

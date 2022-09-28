@@ -27,7 +27,7 @@ public class UpdateProductRequest {
 
     private String image;
 
-    private String productCategoryId;
+    private String categoryId;
 
     private Integer availableItemCount;
 

@@ -1,9 +1,10 @@
 package com.bookstore.catalogservice.controller;
 
-import com.bookstore.catalogservice.dao.ProductCategoryDAO;
-import com.bookstore.catalogservice.service.ProductCategoryService;
-import com.bookstore.catalogservice.vo.request.CreateProductCategoryRequest;
-import com.bookstore.catalogservice.vo.request.UpdateProductCategoryRequest;
+import com.bookstore.catalogservice.dao.CategoryDAO;
+import com.bookstore.catalogservice.service.CategoryService;
+import com.bookstore.catalogservice.service.S3BucketStorageService;
+import com.bookstore.catalogservice.vo.request.CreateCategoryRequest;
+import com.bookstore.catalogservice.vo.request.UpdateCategoryRequest;
 import com.bookstore.catalogservice.vo.resonse.ProductCategoriesPagedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -28,63 +30,76 @@ import java.net.URI;
 
 
 @RestController
-public class ProductCategoryController {
+public class CategoryController {
 
     @Autowired
-    private ProductCategoryService productCategoryService;
+    private CategoryService categoryService;
 
-    @PostMapping("/productCategory")
+    @Autowired
+    private S3BucketStorageService s3BucketStorageService;
+
+    @PostMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> createProductCategory(@RequestBody @Valid CreateProductCategoryRequest createProductCategoryRequest) {
+    public ResponseEntity<?> createCategory(@RequestParam(name = "categoryName") String categoryName,
+                                            @RequestParam(name = "description") String description,
+                                            @RequestParam(name = "file") MultipartFile file
+                                                   ) {
+        String imgUrl = s3BucketStorageService.uploadFileToS3(file);
+        CreateCategoryRequest createCategoryRequest = CreateCategoryRequest
+                .builder()
+                .categoryName(categoryName)
+                .description(description)
+                .imgUrl(imgUrl)
+                .build();
 
-        String productCategory = productCategoryService.createProductCategory(createProductCategoryRequest);
+        String category = categoryService.createCategory(createCategoryRequest);
 
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{productCategoryId}")
-                .buildAndExpand(productCategory).toUri();
+                .fromCurrentRequest().path("/{categoryId}")
+                .buildAndExpand(category).toUri();
 
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/productCategory/{productCategoryId}")
-    public ResponseEntity<ProductCategoryDAO> getProductCategory(@PathVariable("productCategoryId") String productCategoryId) {
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<CategoryDAO> getCategory(@PathVariable("categoryId") String categoryId) {
 
-        ProductCategoryDAO productCategory = productCategoryService.getProductCategory(productCategoryId);
+        CategoryDAO categoryDAO = categoryService.getCategory(categoryId);
 
-        return ResponseEntity.ok(productCategory);
+        return ResponseEntity.ok(categoryDAO);
     }
 
-    @DeleteMapping("/productCategory/{productCategoryId}")
+    @DeleteMapping("/category/{categoryId}")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> deleteProductCategory(@PathVariable("productCategoryId") String productCategoryId) {
+    public ResponseEntity<?> deleteCategory(@PathVariable("categoryId") String categoryId) {
 
-        productCategoryService.deleteProductCategory(productCategoryId);
+        categoryService.deleteCategory(categoryId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/productCategory")
+    @PutMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> updateProductCategory(@RequestBody @Valid UpdateProductCategoryRequest updateProductCategoryRequest) {
+    public ResponseEntity<?> updateCategory(@RequestBody @Valid UpdateCategoryRequest updateCategoryRequest) {
 
-        productCategoryService.updateProductCategory(updateProductCategoryRequest);
+        categoryService.updateCategory(updateCategoryRequest);
 
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/productCategories", produces = "application/json")
+    @GetMapping(value = "/categories", produces = "application/json")
     public ResponseEntity<?> getAllProductCategories(@RequestParam(value = "sort", required = false) String sort,
                                                      @RequestParam(value = "page", required = false) Integer page,
                                                      @RequestParam(value = "size", required = false) Integer size,
-                                                     PagedResourcesAssembler<ProductCategoryDAO> assembler) {
+                                                     PagedResourcesAssembler<CategoryDAO> assembler) {
     
-        Page<ProductCategoryDAO> list = productCategoryService.getAllProductCategories(sort, page, size);
+        Page<CategoryDAO> list = categoryService.getCategories(sort, page, size);
     
         Link link = Link.of(ServletUriComponentsBuilder.fromCurrentRequest()
                                                         .build()
                                                         .toUriString());
 
-        PagedModel<EntityModel<ProductCategoryDAO>> resource = assembler.toModel(list, link);
+        PagedModel<EntityModel<CategoryDAO>> resource = assembler.toModel(list, link);
     
         ProductCategoriesPagedResponse productCategoriesPagedResponse = new ProductCategoriesPagedResponse();
         productCategoriesPagedResponse.setPage(list);

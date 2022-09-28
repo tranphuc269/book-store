@@ -1,9 +1,9 @@
 package com.bookstore.catalogservice.service.impl;
 
-import com.bookstore.catalogservice.dao.ProductCategoryDAO;
+import com.bookstore.catalogservice.dao.CategoryDAO;
 import com.bookstore.catalogservice.dao.ProductDAO;
 import com.bookstore.catalogservice.dao.ReviewDAO;
-import com.bookstore.catalogservice.repository.ProductCategoryRepository;
+import com.bookstore.catalogservice.repository.CategoryRepository;
 import com.bookstore.catalogservice.repository.ProductRepository;
 import com.bookstore.catalogservice.repository.ReviewRepository;
 import com.bookstore.catalogservice.service.ProductService;
@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private ProductCategoryRepository productCategoryRepository;
+    private CategoryRepository categoryRepository;
     @Autowired
     private ReviewService reviewService;
     @Autowired
@@ -37,18 +37,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public String createProduct(CreateProductRequest createProductRequest) {
-        Optional<ProductCategoryDAO> productCategoryOptional =
-                productCategoryRepository.findById(createProductRequest.getProductCategoryId());
+        Optional<CategoryDAO> categoryDAOOptional =
+                categoryRepository.findById(createProductRequest.getCategoryId());
 
-        ProductCategoryDAO productCategory = productCategoryOptional.orElseThrow(() -> new RuntimeException("ProductCategory doesn't exist!"));
+        CategoryDAO categoryDAO = categoryDAOOptional.orElseThrow(() -> new RuntimeException("Category doesn't exist!"));
 
         ProductDAO product = ProductDAO.builder()
                 .productName(createProductRequest.getProductName())
                 .description(createProductRequest.getDescription())
                 .availableItemCount(createProductRequest.getAvailableItemCount())
                 .price(createProductRequest.getPrice())
-                .productCategory(productCategory)
-                .image(createProductRequest.getImage())
+                .category(categoryDAO)
+                .images(createProductRequest.getImage().toString())
                 .build();
 
 
@@ -59,12 +59,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse getProduct(String productId) {
         Optional<ProductDAO> productDAOOptional = productRepository.findById(productId);
-        if(productDAOOptional.isPresent()){
+        if (productDAOOptional.isPresent()) {
             ProductDAO productDAO = productDAOOptional.get();
             List<ReviewDAO> reviews = reviewService.getReviewsForProduct(productId);
             return ProductResponse
                     .builder()
-                    .productCategoryName(productDAO.getProductCategory())
+                    .categoryName(productDAO.getCategory())
                     .productName(productDAO.getProductName())
                     .productId(productDAO.getProductId())
                     .description(productDAO.getDescription())
@@ -75,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
                             .mapToDouble(ReviewDAO::getRatingValue)
                             .average()
                             .orElse(0.0))
-                    .image(productDAO.getImage())
+                    .images(productDAO.getListImages())
                     .build();
         }
         return null;
@@ -109,16 +109,16 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (updateProductRequest.getImage() != null) {
-            productExisting.setImage(updateProductRequest.getImage());
+            productExisting.setImages(updateProductRequest.getImage());
         }
 
-        if (updateProductRequest.getProductCategoryId() != null) {
-            Optional<ProductCategoryDAO> productCategoryOptional =
-                    productCategoryRepository.findById(updateProductRequest.getProductCategoryId());
+        if (updateProductRequest.getCategoryId() != null) {
+            Optional<CategoryDAO> categoryDAOOptional =
+                    categoryRepository.findById(updateProductRequest.getCategoryId());
 
             //check weather product category exists
-            ProductCategoryDAO productCategory = productCategoryOptional.orElseThrow(() -> new RuntimeException("ProductCategory doesn't exist!"));
-            productExisting.setProductCategory(productCategory);
+            CategoryDAO category = categoryDAOOptional.orElseThrow(() -> new RuntimeException("Category doesn't exist!"));
+            productExisting.setCategory(category);
         }
 
         if (updateProductRequest.getAvailableItemCount() != null) {

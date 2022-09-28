@@ -1,6 +1,7 @@
 package com.bookstore.catalogservice.controller;
 
 import com.bookstore.catalogservice.service.ProductService;
+import com.bookstore.catalogservice.service.S3BucketStorageService;
 import com.bookstore.catalogservice.vo.request.CreateProductRequest;
 import com.bookstore.catalogservice.vo.resonse.ProductResponse;
 import com.bookstore.catalogservice.vo.resonse.ProductsPagedResponse;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.LinkRelation;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,27 +23,48 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 
 
 @RestController
 @CrossOrigin
 public class ProductController {
-
+    @Autowired
     private ProductService productService;
 
+
+
     @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private S3BucketStorageService s3BucketStorageService;
 
     @PostMapping("/product")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> createProduct(@RequestBody @Valid CreateProductRequest createProductRequest) {
-
+    public ResponseEntity<?> createProduct(@RequestParam(name = "productName") String productName,
+                                           @RequestParam(name = "description") String description,
+                                           @RequestParam(name = "price") double price,
+                                           @RequestParam(name = "categoryId") String categoryId,
+                                           @RequestParam(name = "availableItemCount") int availableItemCount,
+                                           @RequestParam(name = "files") MultipartFile[] files
+    ) {
+        CreateProductRequest
+                createProductRequest = CreateProductRequest
+                .builder()
+                .productName(productName)
+                .image(new ArrayList<>())
+                .availableItemCount(availableItemCount)
+                .description(description)
+                .price(price)
+                .categoryId(categoryId)
+                .build();
+        for (MultipartFile file : files) {
+            String imgUrl = s3BucketStorageService.uploadFileToS3(file);
+            createProductRequest.getImage().add(imgUrl);
+        }
         String product = productService.createProduct(createProductRequest);
 
         URI location = ServletUriComponentsBuilder

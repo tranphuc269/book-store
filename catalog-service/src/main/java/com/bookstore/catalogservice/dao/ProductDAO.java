@@ -18,6 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -38,22 +40,22 @@ public class ProductDAO extends DateAudit {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @Column(name = "product_description")
+    @Column(name = "product_description", columnDefinition = "TEXT")
     private String description;
     private double price;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "images")
+    private String images;
 
     @ManyToOne
-    @JoinColumn(name = "product_category_id")
-    private ProductCategoryDAO productCategory;
+    @JoinColumn(name = "category_id")
+    private CategoryDAO category;
 
     @Column(name = "available_item_count")
     private int availableItemCount;
 
-    public String getProductCategory() {
-        return productCategory.getProductCategoryName();
+    public String getCategory() {
+        return category.getCategoryName();
     }
 
     public static ProductResponse fromEntity(ProductDAO product) {
@@ -62,13 +64,19 @@ public class ProductDAO extends DateAudit {
         return ProductResponse
                 .builder()
                 .productId(product.getProductId())
-                .image(product.getImage())
+                .images(product.getListImages())
                 .price(product.getPrice())
                 .availableItemCount(product.getAvailableItemCount())
                 .productName(product.getProductName())
                 .description(product.getDescription())
                 .averageRating(0.0)
-                .productCategoryName(product.getProductCategory())
+                .categoryName(product.getCategory())
                 .build();
+    }
+
+    public List<String> getListImages() {
+        List<String> imgs = new ArrayList<>(List.of(this.getImages().replace(']', ' ').replace('[', ' ').trim().split(",")));
+        imgs.replaceAll(String::trim);
+        return imgs;
     }
 }

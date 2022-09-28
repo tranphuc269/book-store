@@ -1,17 +1,20 @@
 package com.bookstore.catalogservice.vo.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CreateProductRequest {
 
     @NotNull(message = "productName should not be null!")
@@ -23,11 +26,11 @@ public class CreateProductRequest {
     @Min(value = 0)
     private double price;
 
-    private String image;
+    private List<String> image;
 
-    @NotNull(message = "productCategoryId should not be null!")
-    @NotEmpty(message = "productCategoryId should not be empty!")
-    private String productCategoryId;
+    @NotNull(message = "category id should not be null!")
+    @NotEmpty(message = "category id should not be empty!")
+    private String categoryId;
 
     private int availableItemCount;
 

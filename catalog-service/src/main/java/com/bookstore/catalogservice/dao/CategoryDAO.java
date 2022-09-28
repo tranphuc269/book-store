@@ -22,23 +22,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product_category")
+@Table(name = "categories")
 @Builder
-public class ProductCategoryDAO extends DateAudit {
+public class CategoryDAO extends DateAudit {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(name = "product_category_id", updatable = false, nullable = false)
-    private String productCategoryId;
+    @Column(name = "category_id", updatable = false, nullable = false)
+    private String categoryId;
 
-    @Column(name = "product_category_name", nullable = false)
-    private String productCategoryName;
+    @Column(name = "category_name", nullable = false)
+    private String categoryName;
 
     @OneToMany(
-            mappedBy = "productCategory",
+            mappedBy = "category",
             cascade = CascadeType.ALL
     )
     private List<ProductDAO> products;
     private String description;
+    private String imgUrl;
 }

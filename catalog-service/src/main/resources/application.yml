@@ -47,6 +47,7 @@ logging:
   level:
     com.bookstore.catalogservice.*: DEBUG
 
+
 management:
   endpoints:
     web:
@@ -55,3 +56,20 @@ management:
 
   security:
     enabled: false
+
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIATSR2NBN46TPXIG5W
+      secret-key: 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
+#      access-key: MJAAJXUVR8UX3K789PMF
+#      secret-key: V56i2LOGxYtcWiDWEwSTQlxi8CMh4NhWm8cePRs5
+    region:
+      static: Asia Pacific (Singapore) ap-southeast-1
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: phuc-bookstore
