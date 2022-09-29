@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 
@@ -72,7 +74,7 @@ public class ProducerServiceImpl implements ProducerService {
     }
 
     @Override
-    public Page<ProducerResponse> getAllProducer(String sort, Integer page, Integer size) {
+    public Page<ProducerResponse> getAllProducerByPage(String sort, Integer page, Integer size) {
         if (size == null || size == 0) {
             size = 20;
         }
@@ -116,5 +118,21 @@ public class ProducerServiceImpl implements ProducerService {
         });
 
         return producerResponsePage;
+    }
+
+    @Override
+    public List<ProducerResponse> getAllProducer() {
+        List<ProducerDAO> producerDAOList = producerRepository.findAll();
+        List<ProducerResponse> producerResponses = new ArrayList<>();
+        producerDAOList.forEach(producerDAO -> {
+            producerResponses.add(ProducerResponse
+                    .builder()
+                    .producerId(producerDAO.getProducerId())
+                    .producerName(producerDAO.getProducerName())
+                    .description(producerDAO.getDescription())
+                    .img(producerDAO.getImgUrl())
+                    .build());
+        });
+        return producerResponses;
     }
 }
