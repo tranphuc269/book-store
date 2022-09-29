@@ -11,7 +11,7 @@ import java.util.Map;
 @Data
 public class ProductCategoriesPagedResponse {
     
-    Page<CategoryDAO> page;
+    Page<CategoryDAO> data;
     Map<String, String> _links = new HashMap<>();
     
 }

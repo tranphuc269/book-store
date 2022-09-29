@@ -48,6 +48,7 @@ public class ProductController {
                                            @RequestParam(name = "description") String description,
                                            @RequestParam(name = "price") double price,
                                            @RequestParam(name = "categoryId") String categoryId,
+                                           @RequestParam(name = "producerId") String producerId,
                                            @RequestParam(name = "availableItemCount") int availableItemCount,
                                            @RequestParam(name = "files") MultipartFile[] files
     ) {
@@ -60,6 +61,7 @@ public class ProductController {
                 .description(description)
                 .price(price)
                 .categoryId(categoryId)
+                .producerId(producerId)
                 .build();
         for (MultipartFile file : files) {
             String imgUrl = s3BucketStorageService.uploadFileToS3(file);

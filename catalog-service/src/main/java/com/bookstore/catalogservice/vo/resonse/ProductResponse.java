@@ -19,6 +19,9 @@ public class ProductResponse {
     private String description;
     private double price;
     private String categoryName;
+    private String categoryId;
+    private String producerId;
+    private String producerName;
     private int availableItemCount;
     private Double averageRating;
     private int noOfRatings;

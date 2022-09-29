@@ -51,6 +51,10 @@ public class ProductDAO extends DateAudit {
     @JoinColumn(name = "category_id")
     private CategoryDAO category;
 
+    @ManyToOne
+    @JoinColumn(name = "producer_id")
+    private ProducerDAO producer;
+
     @Column(name = "available_item_count")
     private int availableItemCount;
 

@@ -52,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void updateCategory(UpdateCategoryRequest updateCategoryRequest) {
 
-        //To check weather the ProductCategory exist.
+        //To check weather the category exist.
         CategoryDAO getCategory =
                 this.getCategory(updateCategoryRequest.getCategoryId());
 

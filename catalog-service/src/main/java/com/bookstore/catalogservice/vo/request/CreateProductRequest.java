@@ -32,6 +32,10 @@ public class CreateProductRequest {
     @NotEmpty(message = "category id should not be empty!")
     private String categoryId;
 
+    @NotNull(message = "category id should not be null!")
+    @NotEmpty(message = "category id should not be empty!")
+    private String producerId;
+
     private int availableItemCount;
 
 }

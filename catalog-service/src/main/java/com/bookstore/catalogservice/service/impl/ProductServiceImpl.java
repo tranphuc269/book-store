@@ -1,9 +1,11 @@
 package com.bookstore.catalogservice.service.impl;
 
 import com.bookstore.catalogservice.dao.CategoryDAO;
+import com.bookstore.catalogservice.dao.ProducerDAO;
 import com.bookstore.catalogservice.dao.ProductDAO;
 import com.bookstore.catalogservice.dao.ReviewDAO;
 import com.bookstore.catalogservice.repository.CategoryRepository;
+import com.bookstore.catalogservice.repository.ProducerRepository;
 import com.bookstore.catalogservice.repository.ProductRepository;
 import com.bookstore.catalogservice.repository.ReviewRepository;
 import com.bookstore.catalogservice.service.ProductService;
@@ -29,6 +31,9 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ProducerRepository producerRepository;
     @Autowired
     private ReviewService reviewService;
     @Autowired
@@ -41,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
                 categoryRepository.findById(createProductRequest.getCategoryId());
 
         CategoryDAO categoryDAO = categoryDAOOptional.orElseThrow(() -> new RuntimeException("Category doesn't exist!"));
-
+        ProducerDAO producerDAO = (producerRepository.findById(createProductRequest.getProducerId())).orElseThrow(() -> new RuntimeException("Producer doesn't exits"));
         ProductDAO product = ProductDAO.builder()
                 .productName(createProductRequest.getProductName())
                 .description(createProductRequest.getDescription())
@@ -49,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
                 .price(createProductRequest.getPrice())
                 .category(categoryDAO)
                 .images(createProductRequest.getImage().toString())
+                .producer(producerDAO)
                 .build();
 
 
