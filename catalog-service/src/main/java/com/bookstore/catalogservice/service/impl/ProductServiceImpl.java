@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -134,6 +135,31 @@ public class ProductServiceImpl implements ProductService {
         productExisting.setCreatedAt(productExisting.getCreatedAt());
 
         productRepository.save(productExisting);
+    }
+
+    @Override
+    public List<ProductResponse> getProductByProducerId(String producerId) {
+        List<ProductDAO> productDaos = productRepository.getProductDAOSByProducerId(producerId);
+        List<ProductResponse> products = new ArrayList<>();
+        productDaos.forEach(v->{
+            List<ReviewDAO> reviews = reviewService.getReviewsForProduct(v.getProductId());
+            products.add(ProductResponse
+                    .builder()
+                    .categoryName(v.getCategory())
+                    .productName(v.getProductName())
+                    .productId(v.getProductId())
+                    .description(v.getDescription())
+                    .price(v.getPrice())
+                    .availableItemCount(v.getAvailableItemCount())
+                    .noOfRatings(reviews.size())
+                    .averageRating(reviews.stream()
+                            .mapToDouble(ReviewDAO::getRatingValue)
+                            .average()
+                            .orElse(0.0))
+                    .images(v.getListImages())
+                    .build());
+        });
+        return products;
     }
 
     @Override

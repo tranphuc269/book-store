@@ -10,6 +10,8 @@ import com.bookstore.catalogservice.vo.resonse.UpdateProductRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 
 public interface ProductService {
 
@@ -20,6 +22,8 @@ public interface ProductService {
   void deleteProduct(String productId);
 
   void updateProduct(UpdateProductRequest updateProductRequest);
+
+  List<ProductResponse> getProductByProducerId(String producerId);
 
   Page<ProductDAO> findAllProducts(Pageable pageable);
 

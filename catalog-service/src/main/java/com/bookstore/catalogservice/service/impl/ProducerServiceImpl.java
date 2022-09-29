@@ -1,22 +1,21 @@
 package com.bookstore.catalogservice.service.impl;
 
-import com.bookstore.catalogservice.dao.CategoryDAO;
 import com.bookstore.catalogservice.dao.ProducerDAO;
 import com.bookstore.catalogservice.repository.ProducerRepository;
 import com.bookstore.catalogservice.service.ProducerService;
 import com.bookstore.catalogservice.vo.request.CreateOrUpdateProducerRequest;
-import com.bookstore.catalogservice.vo.resonse.producer.ProducerPagedResponse;
 import com.bookstore.catalogservice.vo.resonse.producer.ProducerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.function.Function;
 
+
+@Service
 public class ProducerServiceImpl implements ProducerService {
 
     @Autowired
@@ -41,7 +40,7 @@ public class ProducerServiceImpl implements ProducerService {
     @Override
     public Boolean updateProducer(CreateOrUpdateProducerRequest updateProductRequest) {
         try {
-            (producerRepository.findById(updateProductRequest
+            ProducerDAO oldProductDAO = (producerRepository.findById(updateProductRequest
                     .getProducerId()))
                     .orElseThrow(() -> new RuntimeException("ProducerId doesn't exits"));
             ProducerDAO producerDAO = ProducerDAO
@@ -49,7 +48,9 @@ public class ProducerServiceImpl implements ProducerService {
                     .producerId(updateProductRequest.getProducerId())
                     .producerName(updateProductRequest.getProducerName())
                     .description(updateProductRequest.getDescription())
-                    .imgUrl(updateProductRequest.getImgUrl())
+                    .imgUrl(updateProductRequest.getImgUrl().isEmpty()
+                            ? oldProductDAO.getImgUrl()
+                            : updateProductRequest.getImgUrl())
                     .build();
             producerRepository.save(producerDAO);
             return true;
