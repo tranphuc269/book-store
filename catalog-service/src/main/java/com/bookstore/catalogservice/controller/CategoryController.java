@@ -102,7 +102,7 @@ public class CategoryController {
         PagedModel<EntityModel<CategoryDAO>> resource = assembler.toModel(list, link);
     
         ProductCategoriesPagedResponse productCategoriesPagedResponse = new ProductCategoriesPagedResponse();
-        productCategoriesPagedResponse.setPage(list);
+        productCategoriesPagedResponse.setData(list);
 
         if (resource.getLink("first").isPresent()) {
             productCategoriesPagedResponse.get_links().put("first", resource.getLink("first").get().getHref());
