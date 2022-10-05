@@ -61,11 +61,11 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setUuid(UUID.randomUUID());
 
-    java.lang.Error error = new java.lang.Error();
+    Error error = new Error();
     error.setCode(code);
     error.setMessage(message);
 
-    errorResponse.setErrors(Collections.singletonList(error));
+//    errorResponse.setErrors(Collections.singletonList(error));
 
     return errorResponse;
   }

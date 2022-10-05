@@ -15,6 +15,6 @@ import java.util.UUID;
 public class ErrorResponse {
 
   private UUID uuid;
-  private List<java.lang.Error> errors;
+  private List<Error> errors;
 
 }
