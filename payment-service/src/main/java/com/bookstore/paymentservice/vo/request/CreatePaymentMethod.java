@@ -9,4 +9,5 @@ import lombok.Data;
 public class CreatePaymentMethod {
     private String paymentMethodName;
     private String paymentMethodDescription;
+    private String paymentType;
 }

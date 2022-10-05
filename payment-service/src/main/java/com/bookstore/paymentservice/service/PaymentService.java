@@ -12,6 +12,10 @@ import java.util.List;
 public interface PaymentService {
     public PaymentResponse paymentWithVNPay(PaymentRequest paymentRequest, HttpServletRequest request) throws UnsupportedEncodingException;
 
+    public PaymentResponse paymentWithBankTransfer(PaymentRequest paymentRequest);
+
+    public PaymentResponse paymentWithCOD(PaymentRequest paymentRequest);
+
     public List<PaymentMethodResponse> getPaymentMethods();
 
     public PaymentMethodResponse createPaymentMethod(CreatePaymentMethod createPaymentMethod);
