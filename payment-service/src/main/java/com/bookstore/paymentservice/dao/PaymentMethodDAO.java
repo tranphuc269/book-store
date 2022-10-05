@@ -25,7 +25,9 @@ public class PaymentMethodDAO {
     @Column(name = "payment_name", nullable = false, columnDefinition = "TEXT", unique = true)
     private String paymentName;
 
-    private String description;
     @Column(name = "payment_description", columnDefinition = "TEXT")
     private String paymentDescription;
+
+    @Column(name = "payment_type")
+    private String paymentType;
 }

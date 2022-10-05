@@ -132,6 +132,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .builder()
                 .paymentDescription(createPaymentMethod.getPaymentMethodDescription())
                 .paymentName(createPaymentMethod.getPaymentMethodName())
+                .paymentType(createPaymentMethod.getPaymentType())
                 .build();
         PaymentMethodDAO paymentMethodDAOSave = paymentMethodRepository.save(paymentMethodDAO);
         return PaymentMethodResponse
@@ -139,6 +140,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentMethodName(paymentMethodDAOSave.getPaymentName())
                 .paymentMethodDescription(paymentMethodDAOSave.getPaymentDescription())
                 .paymentMethodId(paymentMethodDAOSave.getPaymentId())
+                .paymentMethodType(createPaymentMethod.getPaymentType())
                 .build();
     }
 }

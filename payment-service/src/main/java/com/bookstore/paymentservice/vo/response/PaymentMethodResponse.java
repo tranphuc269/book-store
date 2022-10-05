@@ -10,4 +10,5 @@ public class PaymentMethodResponse {
     private String paymentMethodId;
     private String paymentMethodName;
     private String paymentMethodDescription;
+    private String paymentMethodType;
 }
