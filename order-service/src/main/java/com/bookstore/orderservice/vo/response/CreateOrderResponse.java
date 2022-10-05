@@ -3,12 +3,10 @@ package com.bookstore.orderservice.vo.response;
 import com.bookstore.orderservice.dao.OrderBillingAddressDAO;
 import com.bookstore.orderservice.dao.OrderItemDAO;
 import com.bookstore.orderservice.dao.OrderShippingAddressDAO;
-import com.bookstore.orderservice.vo.Card;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,7 +21,6 @@ public class CreateOrderResponse {
     private List<OrderItemDAO> orderItemDAOS = new ArrayList<>();
     private OrderShippingAddressDAO shippingAddress;
     private OrderBillingAddressDAO billingAddress;
-    private Card card;
     private Double itemsTotalPrice;
     private Double taxPrice;
     private Double shippingPrice;
@@ -31,7 +28,7 @@ public class CreateOrderResponse {
     private boolean isPaid;
     private LocalDateTime paymentDate;
     private boolean isDelivered;
-    private String paymentReceiptUrl;
+    private String paymentUrl;
     private LocalDateTime deliveredDate;
     private Instant created_at;
 }

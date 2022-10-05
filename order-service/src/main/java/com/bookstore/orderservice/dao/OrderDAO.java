@@ -45,8 +45,8 @@ public class OrderDAO extends DateAudit {
     @Column(name = "total_order_price", nullable = false)
     private double totalOrderPrice;
 
-    @Column(name = "payment_method_id", nullable = false)
-    private String paymentMethodId;
+    @Column(name = "payment_method_type", nullable = false)
+    private String paymentMethodType;
 
     @Column(name = "tax_price", nullable = false)
     private double taxPrice;
@@ -57,14 +57,8 @@ public class OrderDAO extends DateAudit {
     @Column(name = "id_paid")
     private boolean isPaid;
 
-    @Column(name = "payment_id")
-    private String paymentId;
-
     @Column(name = "payment_date")
     private LocalDateTime paymentDate;
-
-    @Column(name = "payment_receipt_url")
-    private String paymentReceiptUrl;
 
     @Column(name = "delivered_date")
     private LocalDateTime deliveredDate;

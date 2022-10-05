@@ -7,7 +7,7 @@ security:
 
 spring:
   application:
-    name: billing-service
+    name: order-service
   zipkin:
     base-url: http://127.0.0.1:9411
     enabled: true

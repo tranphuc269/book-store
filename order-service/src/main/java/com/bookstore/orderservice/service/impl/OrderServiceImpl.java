@@ -1,6 +1,5 @@
 package com.bookstore.orderservice.service.impl;
 
-import com.bookstore.orderservice.common.exception.RunTimeExceptionPlaceHolder;
 import com.bookstore.orderservice.common.util.CommonUtilityMethods;
 import com.bookstore.orderservice.dao.*;
 import com.bookstore.orderservice.feign.BillingFeignClient;
@@ -12,11 +11,9 @@ import com.bookstore.orderservice.repository.OrderShippingAddressRepository;
 import com.bookstore.orderservice.service.CartItemService;
 import com.bookstore.orderservice.service.CartService;
 import com.bookstore.orderservice.service.OrderService;
-import com.bookstore.orderservice.vo.Card;
 import com.bookstore.orderservice.vo.request.CreateOrderRequest;
-import com.bookstore.orderservice.vo.request.CreatePaymentRequest;
-import com.bookstore.orderservice.vo.request.GetPaymentMethodResponse;
 import com.bookstore.orderservice.vo.request.PreviewOrderRequest;
+import com.bookstore.orderservice.vo.request.feign.CreatePaymentRequest;
 import com.bookstore.orderservice.vo.response.CreateOrderResponse;
 import com.bookstore.orderservice.vo.response.CreatePaymentResponse;
 import com.bookstore.orderservice.vo.response.GetAddressResponse;
@@ -25,10 +22,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Service
 public class OrderServiceImpl implements OrderService {
 
     private OrderRepository orderRepository;
@@ -125,19 +125,19 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalOrderPrice(totalPrice);
 
         //Do Payment
-        CreatePaymentRequest createPaymentRequest = new CreatePaymentRequest();
-        createPaymentRequest.setAmount((int)totalPrice*100);
-        createPaymentRequest.setCurrency("VND");
-        createPaymentRequest.setPaymentMethodId(createOrderRequest.getPaymentMethodId());
-
+        CreatePaymentRequest createPaymentRequest = CreatePaymentRequest
+                .builder()
+                .amount(createOrderRequest.getAmount())
+                .paymentType(createOrderRequest.getPaymentType())
+                .information(createOrderRequest.getInformation())
+                .orderId(createOrderRequest.getOrderId())
+                .build();
         CreatePaymentResponse createPaymentResponse = paymentFeignClient.doPayment(createPaymentRequest);
 
         /// save to local
-        order.setPaid(createPaymentResponse.isCaptured());
-        order.setPaymentDate(createPaymentResponse.getPaymentDate());
-        order.setPaymentId(createPaymentResponse.getPaymentId());
-        order.setPaymentReceiptUrl(createPaymentResponse.getReceipt_url());
-        order.setPaymentMethodId(createOrderRequest.getPaymentMethodId());
+        order.setPaid(false);
+        order.setPaymentDate(null);
+        order.setPaymentMethodType(createPaymentResponse.getPaymentType().name());
         OrderDAO save = orderRepository.save(order);
 
         if (billingAddress != null) {
@@ -174,9 +174,9 @@ public class OrderServiceImpl implements OrderService {
         createOrderResponse.setCreated_at(save.getCreatedAt());
 
         //set Payment info
-        createOrderResponse.setPaid(createPaymentResponse.isCaptured());
-        createOrderResponse.setPaymentDate(createPaymentResponse.getPaymentDate());
-        createOrderResponse.setPaymentReceiptUrl(createPaymentResponse.getReceipt_url());
+        createOrderResponse.setPaid(false);
+        createOrderResponse.setPaymentDate(null);
+        createOrderResponse.setPaymentUrl(createPaymentResponse.getUrlPayment());
 
         //Clear cart
         cartItemService.removeAllCartItems(cartDAO.getCartId());
@@ -199,18 +199,6 @@ public class OrderServiceImpl implements OrderService {
                 previewOrderResponse.setBillingAddress(shippingAddress);
             }
             previewOrderResponse.setShippingAddress(shippingAddress);
-        }
-
-        try{
-            GetPaymentMethodResponse myPaymentMethodById = paymentFeignClient.getMyPaymentMethodById(previewOrderRequest.getPaymentMethodId());
-            Card card = new Card();
-            card.setLast4Digits(myPaymentMethodById.getCardLast4Digits());
-            card.setCardBrand(myPaymentMethodById.getCardType());
-            card.setPaymentMethodId(myPaymentMethodById.getPaymentMethodId());
-            previewOrderResponse.setCard(card);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RunTimeExceptionPlaceHolder("Not a valid Payment Method");
         }
 
         CartDAO cart = cartService.getCart();
@@ -255,16 +243,7 @@ public class OrderServiceImpl implements OrderService {
         if(!userIdFromToken.equals(order.getUserId())){
             throw new RuntimeException("Order doesn't belong to this User! UnAuthorized!");
         }
-        Card card = new Card();
-        try{
-            GetPaymentMethodResponse myPaymentMethodById = paymentFeignClient.getMyPaymentMethodById(order.getPaymentMethodId());
-            card.setLast4Digits(myPaymentMethodById.getCardLast4Digits());
-            card.setCardBrand(myPaymentMethodById.getCardType());
-            card.setPaymentMethodId(myPaymentMethodById.getPaymentMethodId());
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RunTimeExceptionPlaceHolder("Not a valid Payment Method");
-        }
+
 
 
         OrderBillingAddressDAO billingAddress = orderBillingAddressRepository.findByOrderId(orderId);
@@ -276,12 +255,11 @@ public class OrderServiceImpl implements OrderService {
                 .billingAddress(billingAddress)
                 .shippingAddress(shippingAddress)
                 .shippingPrice(order.getShippingPrice())
-                .card(card)
                 .isDelivered(order.isDelivered())
                 .isPaid(order.isPaid())
                 .itemsTotalPrice(order.getTotalItemsPrice())
                 .paymentDate(order.getPaymentDate())
-                .paymentReceiptUrl(order.getPaymentReceiptUrl())
+                .paymentUrl(null)
                 .taxPrice(order.getTaxPrice())
                 .totalPrice(order.getTotalOrderPrice())
                 .build();
@@ -312,29 +290,17 @@ public class OrderServiceImpl implements OrderService {
             OrderBillingAddressDAO billingAddress = orderBillingAddressRepository.findByOrderId(orderId);
             OrderShippingAddressDAO shippingAddress = orderShippingAddressRepository.findByOrderId(orderId);
 
-            Card card = new Card();
-            try{
-                GetPaymentMethodResponse myPaymentMethodById = paymentFeignClient.getMyPaymentMethodById(o.getPaymentMethodId());
-                card.setLast4Digits(myPaymentMethodById.getCardLast4Digits());
-                card.setCardBrand(myPaymentMethodById.getCardType());
-                card.setPaymentMethodId(myPaymentMethodById.getPaymentMethodId());
-            }catch (Exception e){
-                e.printStackTrace();
-                throw new RunTimeExceptionPlaceHolder("Not a valid Payment Method");
-            }
-
             CreateOrderResponse createOrderResponse = CreateOrderResponse.builder()
                     .orderId(orderId)
                     .orderItemDAOS(o.getOrderItemDAOS())
                     .billingAddress(billingAddress)
                     .shippingAddress(shippingAddress)
                     .shippingPrice(o.getShippingPrice())
-                    .card(card)
                     .isDelivered(o.isDelivered())
                     .isPaid(o.isPaid())
                     .itemsTotalPrice(o.getTotalItemsPrice())
                     .paymentDate(o.getPaymentDate())
-                    .paymentReceiptUrl(o.getPaymentReceiptUrl())
+                    .paymentUrl(null)
                     .taxPrice(o.getTaxPrice())
                     .totalPrice(o.getTotalOrderPrice())
                     .created_at(o.getCreatedAt())

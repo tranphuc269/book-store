@@ -9,10 +9,13 @@ import com.bookstore.orderservice.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
+
+@Service
 public class CartServiceImpl implements CartService {
     @Autowired
     private CartRepository cartRepository;
@@ -20,7 +23,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDAO getCart() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userIdFromToken = CommonUtilityMethods.getUserNameFromToken(authentication);
+        String userIdFromToken = CommonUtilityMethods.getUserIdFromToken(authentication);
         Optional<CartDAO> cartDAO = cartRepository.findCartByUserId(userIdFromToken);
         synchronized (CartServiceImpl.class) {
             if (cartDAO.isEmpty()) {
