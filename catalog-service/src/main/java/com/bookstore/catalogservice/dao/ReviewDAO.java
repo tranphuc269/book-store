@@ -46,7 +46,7 @@ public class ReviewDAO extends DateAudit {
     @Max(5)
     private double ratingValue;
 
-    @Column(name = "review_content")
+    @Column(name = "review_content", columnDefinition = "TEXT")
     private String reviewContent;
 
 }

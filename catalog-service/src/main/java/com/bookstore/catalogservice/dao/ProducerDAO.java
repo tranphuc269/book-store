@@ -25,21 +25,17 @@ import java.util.List;
 @Table(name = "producers")
 @Builder
 public class ProducerDAO extends DateAudit {
-
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "producer_id", updatable = false, nullable = false)
     private String producerId;
 
-    @Column(name = "producer_name", nullable = false)
+    @Column(name = "producer_name", nullable = false, columnDefinition = "TEXT")
     private String producerName;
 
-    @OneToMany(
-            mappedBy = "producer",
-            cascade = CascadeType.ALL
-    )
-    private List<ProductDAO> products;
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
+    @Column(name = "img_url", columnDefinition = "TEXT")
     private String imgUrl;
 }

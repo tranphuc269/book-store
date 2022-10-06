@@ -2,9 +2,7 @@ package com.bookstore.orderservice.dao;
 
 import com.bookstore.orderservice.common.util.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CascadeType;
@@ -19,7 +17,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "order_item")
-@Data
+@Setter
+@Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemDAO extends DateAudit {

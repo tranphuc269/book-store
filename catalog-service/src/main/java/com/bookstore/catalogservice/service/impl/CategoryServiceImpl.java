@@ -71,14 +71,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Page<CategoryDAO> getCategories(String sort, Integer page, Integer size) {
 
-        //set defaults
-        if (size == null || size == 0) {
-            size = 20;
-        }
 
         //set defaults
         if (page == null || page == 0) {
             page = 0;
+            size = 20;
         }
 
         Pageable pageable;
@@ -100,7 +97,6 @@ public class CategoryServiceImpl implements CategoryService {
             }
 
         }
-
         return categoryRepository.findAll(pageable);
     }
 }

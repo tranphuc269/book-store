@@ -89,8 +89,6 @@ public class ProducerController {
     @GetMapping("/producer/{producerId}")
     public ResponseEntity<?> getDetailProducer(@PathVariable String producerId) {
         ProducerResponse producerResponse = producerService.getProducer(producerId);
-        List<ProductResponse> productDAOList = productService.getProductByProducerId(producerId);
-        producerResponse.setProducts(productDAOList);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(producerResponse);

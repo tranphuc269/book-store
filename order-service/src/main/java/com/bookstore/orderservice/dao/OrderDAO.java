@@ -29,9 +29,6 @@ public class OrderDAO extends DateAudit {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "order_id", updatable = false, nullable = false)
     private String orderId;
-    
-    @Column(name = "user_name", nullable = false)
-    private String userName;
 
     @Column(name = "user_id", nullable = false)
     private String userId;

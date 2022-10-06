@@ -37,14 +37,14 @@ public class ProductDAO extends DateAudit {
     @Column(name = "product_id", updatable = false, nullable = false)
     private String productId;
 
-    @Column(name = "product_name", nullable = false)
+    @Column(name = "product_name", nullable = false, columnDefinition = "TEXT")
     private String productName;
 
     @Column(name = "product_description", columnDefinition = "TEXT")
     private String description;
     private double price;
 
-    @Column(name = "images")
+    @Column(name = "images", columnDefinition = "TEXT")
     private String images;
 
     @ManyToOne
@@ -58,8 +58,12 @@ public class ProductDAO extends DateAudit {
     @Column(name = "available_item_count")
     private int availableItemCount;
 
-    public String getCategory() {
+    public String getCategoryName() {
         return category.getCategoryName();
+    }
+
+    public String getCategoryId() {
+        return category.getCategoryId();
     }
 
     public static ProductResponse fromEntity(ProductDAO product) {
@@ -74,7 +78,10 @@ public class ProductDAO extends DateAudit {
                 .productName(product.getProductName())
                 .description(product.getDescription())
                 .averageRating(0.0)
-                .categoryName(product.getCategory())
+                .categoryName(product.getCategoryName())
+                .categoryId(product.getCategoryId())
+                .producerId(product.getProducer().getProducerId())
+                .producerName(product.getProducer().getProducerName())
                 .build();
     }
 

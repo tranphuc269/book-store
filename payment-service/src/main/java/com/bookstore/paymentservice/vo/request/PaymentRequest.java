@@ -8,9 +8,9 @@ import lombok.Data;
 @Builder
 @Data
 public class PaymentRequest {
-    private Long vnpAmount;
-    private String vnpOrderInfo;
-    private Long vnpTxnRef;
+    private Long amount;
+    private String information;
+    private String orderId;
     private PaymentEnums paymentType;
 
 }

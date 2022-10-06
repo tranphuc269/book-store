@@ -29,26 +29,11 @@ public class PaymentController {
             switch (paymentRequest.getPaymentType()) {
 
                 case VNPAY:
-                    return ResponseEntity.ok(BookStoreResponse
-                            .builder()
-                            .data(paymentService.paymentWithVNPay(paymentRequest, request))
-                            .success(true)
-                            .message("")
-                            .build());
+                    return ResponseEntity.ok(paymentService.paymentWithVNPay(paymentRequest, request));
                 case COD:
-                    return ResponseEntity.ok(BookStoreResponse
-                            .builder()
-                            .data(paymentService.paymentWithCOD(paymentRequest))
-                            .success(true)
-                            .message("")
-                            .build());
+                    return ResponseEntity.ok(paymentService.paymentWithCOD(paymentRequest));
                 case BANKING:
-                    return ResponseEntity.ok(BookStoreResponse
-                            .builder()
-                            .data(paymentService.paymentWithBankTransfer(paymentRequest))
-                            .success(true)
-                            .message("")
-                            .build());
+                    return ResponseEntity.ok(paymentService.paymentWithBankTransfer(paymentRequest));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BookStoreResponse
                     .builder()

@@ -1,5 +1,6 @@
 package com.bookstore.orderservice.service.impl;
 
+import com.bookstore.orderservice.common.exception.RunTimeExceptionPlaceHolder;
 import com.bookstore.orderservice.common.util.CommonUtilityMethods;
 import com.bookstore.orderservice.dao.*;
 import com.bookstore.orderservice.feign.BillingFeignClient;
@@ -11,6 +12,7 @@ import com.bookstore.orderservice.repository.OrderShippingAddressRepository;
 import com.bookstore.orderservice.service.CartItemService;
 import com.bookstore.orderservice.service.CartService;
 import com.bookstore.orderservice.service.OrderService;
+import com.bookstore.orderservice.utils.StringConstant;
 import com.bookstore.orderservice.vo.request.CreateOrderRequest;
 import com.bookstore.orderservice.vo.request.PreviewOrderRequest;
 import com.bookstore.orderservice.vo.request.feign.CreatePaymentRequest;
@@ -127,17 +129,21 @@ public class OrderServiceImpl implements OrderService {
         //Do Payment
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest
                 .builder()
-                .amount(createOrderRequest.getAmount())
+                .amount((long) itemsPrice)
                 .paymentType(createOrderRequest.getPaymentType())
                 .information(createOrderRequest.getInformation())
-                .orderId(createOrderRequest.getOrderId())
+                .orderId(cartDAO.getCartId()) // Cho cart id là duy nhất :))
                 .build();
+        System.out.println("createPaymentRequest : " + createPaymentRequest);
         CreatePaymentResponse createPaymentResponse = paymentFeignClient.doPayment(createPaymentRequest);
-
+        if (createPaymentResponse.getPaymentType() == null) {
+            throw new RunTimeExceptionPlaceHolder(StringConstant.ERROR_TEXT);
+        }
+        System.out.println("createPaymentResponse : " + createPaymentResponse);
         /// save to local
         order.setPaid(false);
         order.setPaymentDate(null);
-        order.setPaymentMethodType(createPaymentResponse.getPaymentType().name());
+        order.setPaymentMethodType(createOrderRequest.getPaymentType().name());
         OrderDAO save = orderRepository.save(order);
 
         if (billingAddress != null) {
@@ -188,12 +194,12 @@ public class OrderServiceImpl implements OrderService {
     public PreviewOrderResponse previewOrder(PreviewOrderRequest previewOrderRequest) {
         PreviewOrderResponse previewOrderResponse = new PreviewOrderResponse();
 
-        if(previewOrderRequest.getBillingAddressId() != null && !previewOrderRequest.getBillingAddressId().isEmpty()){
+        if (previewOrderRequest.getBillingAddressId() != null && !previewOrderRequest.getBillingAddressId().isEmpty()) {
             GetAddressResponse billingAddress = billingFeignClient.getAddressById(previewOrderRequest.getBillingAddressId());
             previewOrderResponse.setBillingAddress(billingAddress);
         }
 
-        if(previewOrderRequest.getShippingAddressId() != null && !previewOrderRequest.getShippingAddressId().isEmpty()){
+        if (previewOrderRequest.getShippingAddressId() != null && !previewOrderRequest.getShippingAddressId().isEmpty()) {
             GetAddressResponse shippingAddress = billingFeignClient.getAddressById(previewOrderRequest.getShippingAddressId());
             if (previewOrderRequest.getBillingAddressId() == null) {
                 previewOrderResponse.setBillingAddress(shippingAddress);
@@ -218,7 +224,7 @@ public class OrderServiceImpl implements OrderService {
         double itemsPrice = previewOrderResponse.getOrderItems().stream().mapToDouble(OrderItemDAO::getOrderExtendedPrice).sum();
         previewOrderResponse.setItemsTotalPrice(itemsPrice);
 
-        Double taxPrice = (itemsPrice * 10 ) / 100;
+        Double taxPrice = (itemsPrice * 10) / 100;
         previewOrderResponse.setTaxPrice(taxPrice);
 
         //Hardcode to 10
@@ -240,10 +246,9 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Order No Found");
         }
 
-        if(!userIdFromToken.equals(order.getUserId())){
+        if (!userIdFromToken.equals(order.getUserId())) {
             throw new RuntimeException("Order doesn't belong to this User! UnAuthorized!");
         }
-
 
 
         OrderBillingAddressDAO billingAddress = orderBillingAddressRepository.findByOrderId(orderId);
@@ -285,7 +290,7 @@ public class OrderServiceImpl implements OrderService {
 
     private List<CreateOrderResponse> getCreateOrderResponses(Iterable<OrderDAO> order) {
         List<CreateOrderResponse> createOrderResponseList = new ArrayList<>();
-        order.forEach(o->{
+        order.forEach(o -> {
             String orderId = o.getOrderId();
             OrderBillingAddressDAO billingAddress = orderBillingAddressRepository.findByOrderId(orderId);
             OrderShippingAddressDAO shippingAddress = orderShippingAddressRepository.findByOrderId(orderId);

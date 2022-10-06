@@ -17,8 +17,6 @@ public class CreateOrderRequest {
     private String billingAddressId;
     @NotBlank
     private String shippingAddressId;
-    private Long amount;
     private String information;
-    private String orderId;
     private PaymentEnums paymentType;
 }

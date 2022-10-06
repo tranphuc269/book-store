@@ -14,5 +14,4 @@ public class ProducerResponse {
     private String producerName;
     private String description;
     private String img;
-    private List<ProductResponse> products;
 }

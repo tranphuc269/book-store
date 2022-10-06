@@ -71,13 +71,16 @@ public class ProductServiceImpl implements ProductService {
             List<ReviewDAO> reviews = reviewService.getReviewsForProduct(productId);
             return ProductResponse
                     .builder()
-                    .categoryName(productDAO.getCategory())
+                    .categoryName(productDAO.getCategoryName())
+                    .categoryId(productDAO.getCategoryId())
                     .productName(productDAO.getProductName())
                     .productId(productDAO.getProductId())
                     .description(productDAO.getDescription())
                     .price(productDAO.getPrice())
                     .availableItemCount(productDAO.getAvailableItemCount())
                     .noOfRatings(reviews.size())
+                    .producerId(productDAO.getProducer().getProducerId())
+                    .producerName(productDAO.getProducer().getProducerName())
                     .averageRating(reviews.stream()
                             .mapToDouble(ReviewDAO::getRatingValue)
                             .average()
@@ -141,11 +144,14 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> getProductByProducerId(String producerId) {
         List<ProductDAO> productDaos = productRepository.getProductDAOSByProducerId(producerId);
         List<ProductResponse> products = new ArrayList<>();
-        productDaos.forEach(v->{
+        productDaos.forEach(v -> {
             List<ReviewDAO> reviews = reviewService.getReviewsForProduct(v.getProductId());
             products.add(ProductResponse
                     .builder()
-                    .categoryName(v.getCategory())
+                    .categoryName(v.getCategoryName())
+                    .categoryId(v.getCategoryId())
+                    .producerName(v.getProducer().getProducerName())
+                    .producerId(v.getProducer().getProducerId())
                     .productName(v.getProductName())
                     .productId(v.getProductId())
                     .description(v.getDescription())

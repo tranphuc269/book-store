@@ -32,14 +32,10 @@ public class CategoryDAO extends DateAudit {
     @Column(name = "category_id", updatable = false, nullable = false)
     private String categoryId;
 
-    @Column(name = "category_name", nullable = false)
+    @Column(name = "category_name", nullable = false, columnDefinition = "TEXT")
     private String categoryName;
 
-    @OneToMany(
-            mappedBy = "category",
-            cascade = CascadeType.ALL
-    )
-    private List<ProductDAO> products;
     private String description;
+    @Column(name = "img_url", columnDefinition = "TEXT")
     private String imgUrl;
 }

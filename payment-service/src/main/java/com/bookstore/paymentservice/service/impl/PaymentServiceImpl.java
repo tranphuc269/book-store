@@ -42,16 +42,16 @@ public class PaymentServiceImpl implements PaymentService {
         vnp_Params.put("vnp_Version", VnPayConstant.vnp_Version);
         vnp_Params.put("vnp_Command", VnPayConstant.vnp_Command);
         vnp_Params.put("vnp_TmnCode", VnPayConstant.vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(paymentRequest.getVnpAmount()));
+        vnp_Params.put("vnp_Amount", String.valueOf(paymentRequest.getAmount()));
 //        vnp_Params.put("vnp_BankCode", VnPayConstant.vnp_BankCode);
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
         vnp_Params.put("vnp_CurrCode", VnPayConstant.vnp_CurrCode);
         vnp_Params.put("vnp_IpAddr", IpAddressUtil.getIpAddress(request));
         vnp_Params.put("vnp_Locale", VnPayConstant.vnp_Locale);
-        vnp_Params.put("vnp_OrderInfo", paymentRequest.getVnpOrderInfo());
+        vnp_Params.put("vnp_OrderInfo", paymentRequest.getInformation());
 //        vnp_Params.put("vnp_OrderType",vnPayRequestPayment.getVnpOrderType());
         vnp_Params.put("vnp_ReturnUrl", VnPayConstant.vnp_ReturnUrl);
-        vnp_Params.put("vnp_TxnRef", String.valueOf(paymentRequest.getVnpTxnRef()));
+        vnp_Params.put("vnp_TxnRef", String.valueOf(paymentRequest.getOrderId()));
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
         List<String> fieldList = new ArrayList<>(vnp_Params.keySet());
