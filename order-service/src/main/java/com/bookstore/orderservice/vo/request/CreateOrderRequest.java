@@ -1,6 +1,6 @@
 package com.bookstore.orderservice.vo.request;
 
-import com.bookstore.orderservice.utils.feign.PaymentEnums;
+import com.bookstore.orderservice.utils.feign.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +18,5 @@ public class CreateOrderRequest {
     @NotBlank
     private String shippingAddressId;
     private String information;
-    private PaymentEnums paymentType;
+    private PaymentType paymentType;
 }

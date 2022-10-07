@@ -1,7 +1,11 @@
 package com.bookstore.catalogservice.controller;
 
+import com.bookstore.catalogservice.common.util.CommonUtilityMethods;
+import com.bookstore.catalogservice.kafka.BookStoreKafkaProducer;
 import com.bookstore.catalogservice.service.ProductService;
 import com.bookstore.catalogservice.service.S3BucketStorageService;
+import com.bookstore.catalogservice.utils.StringConstant;
+import com.bookstore.catalogservice.vo.request.CreateCartItem;
 import com.bookstore.catalogservice.vo.request.CreateProductRequest;
 import com.bookstore.catalogservice.vo.resonse.ProductResponse;
 import com.bookstore.catalogservice.vo.resonse.ProductsPagedResponse;
@@ -14,6 +18,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +44,8 @@ public class ProductController {
     private ProductService productService;
 
 
+    @Autowired
+    private BookStoreKafkaProducer kafkaProducer;
 
     @Autowired
     private S3BucketStorageService s3BucketStorageService;
@@ -141,5 +149,15 @@ public class ProductController {
 
         return ResponseEntity.ok(productsPagedResponse);
 
+    }
+
+
+    @PostMapping(value = "/add-to-cart")
+    public ResponseEntity<?> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = CommonUtilityMethods.getUserIdFromToken(authentication);
+        createCartItem.setUserId(userId);
+        kafkaProducer.send(StringConstant.ADD_PRODUCT_TO_CART_TOPIC, createCartItem);
+        return ResponseEntity.ok().build();
     }
 }

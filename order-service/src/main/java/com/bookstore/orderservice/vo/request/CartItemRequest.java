@@ -22,5 +22,7 @@ public class CartItemRequest {
 
     @Min(message = "quantity should be greater than 0", value = 1)
     private Integer quantity;
+
+    private String userId;
     
 }

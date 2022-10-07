@@ -16,7 +16,11 @@ public class AuthForwardInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        template.header(HttpHeaders.AUTHORIZATION, request.getHeader(HttpHeaders.AUTHORIZATION));
+        try{
+            HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+            template.header(HttpHeaders.AUTHORIZATION, request.getHeader(HttpHeaders.AUTHORIZATION));
+        }catch (Exception e){
+
+        }
     }
 }

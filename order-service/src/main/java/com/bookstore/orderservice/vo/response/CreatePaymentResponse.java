@@ -1,13 +1,11 @@
 package com.bookstore.orderservice.vo.response;
 
-import com.bookstore.orderservice.utils.feign.PaymentEnums;
+import com.bookstore.orderservice.utils.feign.PaymentType;
 import com.bookstore.orderservice.utils.feign.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +13,6 @@ import java.time.LocalDateTime;
 @Builder
 public class CreatePaymentResponse {
     private String urlPayment;
-    private PaymentEnums paymentType;
+    private PaymentType paymentType;
     private PaymentStatus status;
 }

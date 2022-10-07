@@ -3,6 +3,7 @@ package com.bookstore.orderservice.vo.response;
 import com.bookstore.orderservice.dao.OrderBillingAddressDAO;
 import com.bookstore.orderservice.dao.OrderItemDAO;
 import com.bookstore.orderservice.dao.OrderShippingAddressDAO;
+import com.bookstore.orderservice.utils.feign.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class CreateOrderResponse {
     private boolean isPaid;
     private LocalDateTime paymentDate;
     private boolean isDelivered;
-    private String paymentUrl;
     private LocalDateTime deliveredDate;
     private Instant created_at;
+    private String paymentType;
 }

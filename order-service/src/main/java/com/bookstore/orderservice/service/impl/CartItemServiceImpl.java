@@ -50,8 +50,14 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public void addCartItem(CartItemRequest cartItemRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = CommonUtilityMethods.getUserIdFromToken(authentication);
+        String userId;
+        if(cartItemRequest.getUserId() != null){
+            userId = cartItemRequest.getUserId();
+        }else{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = CommonUtilityMethods.getUserIdFromToken(authentication);
+        }
+
         CartDAO cartByUserId = cartService.getCartByUserId(userId);
 
         synchronized (CartServiceImpl.class) {

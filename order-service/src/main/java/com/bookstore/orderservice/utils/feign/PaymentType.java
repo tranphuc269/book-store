@@ -1,6 +1,6 @@
 package com.bookstore.orderservice.utils.feign;
 
-public enum PaymentEnums {
+public enum PaymentType {
     VNPAY,
     COD,
     BANKING

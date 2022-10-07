@@ -182,8 +182,6 @@ public class OrderServiceImpl implements OrderService {
         //set Payment info
         createOrderResponse.setPaid(false);
         createOrderResponse.setPaymentDate(null);
-        createOrderResponse.setPaymentUrl(createPaymentResponse.getUrlPayment());
-
         //Clear cart
         cartItemService.removeAllCartItems(cartDAO.getCartId());
 
@@ -264,7 +262,6 @@ public class OrderServiceImpl implements OrderService {
                 .isPaid(order.isPaid())
                 .itemsTotalPrice(order.getTotalItemsPrice())
                 .paymentDate(order.getPaymentDate())
-                .paymentUrl(null)
                 .taxPrice(order.getTaxPrice())
                 .totalPrice(order.getTotalOrderPrice())
                 .build();
@@ -277,7 +274,6 @@ public class OrderServiceImpl implements OrderService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userIdFromToken = CommonUtilityMethods.getUserIdFromToken(authentication);
         List<OrderDAO> order = orderRepository.findByUserId(userIdFromToken);
-
         return getCreateOrderResponses(order);
     }
 
@@ -305,9 +301,9 @@ public class OrderServiceImpl implements OrderService {
                     .isPaid(o.isPaid())
                     .itemsTotalPrice(o.getTotalItemsPrice())
                     .paymentDate(o.getPaymentDate())
-                    .paymentUrl(null)
                     .taxPrice(o.getTaxPrice())
                     .totalPrice(o.getTotalOrderPrice())
+                    .paymentType(o.getPaymentMethodType())
                     .created_at(o.getCreatedAt())
                     .build();
             createOrderResponseList.add(createOrderResponse);
