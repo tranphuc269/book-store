@@ -1,4 +1,7 @@
-package com.bookstore.orderservice.message;
+package com.bookstore.paymentservice.message;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -9,12 +12,9 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @EnableKafka
 @Configuration
-public class KafkaConsumerConfig {
+public class BookStoreKafkaConfig {
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> properties = new HashMap<>();

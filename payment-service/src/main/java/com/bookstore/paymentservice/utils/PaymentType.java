@@ -1,6 +1,6 @@
 package com.bookstore.paymentservice.utils;
 
-public enum PaymentEnums {
+public enum PaymentType {
     VNPAY,
     COD,
     BANKING

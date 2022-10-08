@@ -32,4 +32,5 @@ public class CreateOrderResponse {
     private LocalDateTime deliveredDate;
     private Instant created_at;
     private String paymentType;
+    private String paymentUrl;
 }

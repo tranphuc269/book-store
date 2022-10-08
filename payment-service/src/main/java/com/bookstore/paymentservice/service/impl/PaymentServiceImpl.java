@@ -4,7 +4,7 @@ import com.bookstore.paymentservice.dao.PaymentMethodDAO;
 import com.bookstore.paymentservice.repository.PaymentMethodRepository;
 import com.bookstore.paymentservice.service.PaymentService;
 import com.bookstore.paymentservice.utils.IpAddressUtil;
-import com.bookstore.paymentservice.utils.PaymentEnums;
+import com.bookstore.paymentservice.utils.PaymentType;
 import com.bookstore.paymentservice.utils.PaymentStatus;
 import com.bookstore.paymentservice.utils.VnPayConstant;
 import com.bookstore.paymentservice.vo.request.CreatePaymentMethod;
@@ -86,7 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
         return PaymentResponse
                 .builder()
                 .urlPayment(paymentUrl)
-                .paymentType(PaymentEnums.VNPAY)
+                .paymentType(PaymentType.VNPAY)
                 .status(PaymentStatus.PENDING)
                 .build();
     }
@@ -96,7 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
         return PaymentResponse
                 .builder()
                 .urlPayment(null)
-                .paymentType(PaymentEnums.BANKING)
+                .paymentType(PaymentType.BANKING)
                 .status(PaymentStatus.PENDING)
                 .build();
     }
@@ -106,7 +106,7 @@ public class PaymentServiceImpl implements PaymentService {
         return PaymentResponse
                 .builder()
                 .urlPayment(null)
-                .paymentType(PaymentEnums.COD)
+                .paymentType(PaymentType.COD)
                 .status(PaymentStatus.PENDING)
                 .build();
     }

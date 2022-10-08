@@ -5,6 +5,7 @@ import com.bookstore.orderservice.common.util.CommonUtilityMethods;
 import com.bookstore.orderservice.dao.*;
 import com.bookstore.orderservice.feign.BillingFeignClient;
 import com.bookstore.orderservice.feign.PaymentFeignClient;
+import com.bookstore.orderservice.message.BookStoreKafkaProducer;
 import com.bookstore.orderservice.repository.OrderBillingAddressRepository;
 import com.bookstore.orderservice.repository.OrderItemRepository;
 import com.bookstore.orderservice.repository.OrderRepository;
@@ -13,6 +14,7 @@ import com.bookstore.orderservice.service.CartItemService;
 import com.bookstore.orderservice.service.CartService;
 import com.bookstore.orderservice.service.OrderService;
 import com.bookstore.orderservice.utils.StringConstant;
+import com.bookstore.orderservice.utils.feign.PaymentType;
 import com.bookstore.orderservice.vo.request.CreateOrderRequest;
 import com.bookstore.orderservice.vo.request.PreviewOrderRequest;
 import com.bookstore.orderservice.vo.request.feign.CreatePaymentRequest;
@@ -42,6 +44,8 @@ public class OrderServiceImpl implements OrderService {
     private BillingFeignClient billingFeignClient;
     private PaymentFeignClient paymentFeignClient;
 
+    private BookStoreKafkaProducer kafkaProducer;
+
     @Autowired
     public OrderServiceImpl(
             OrderRepository orderRepository,
@@ -51,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
             CartService cartService,
             CartItemService cartItemService,
             BillingFeignClient billingFeignClient,
+            BookStoreKafkaProducer kafkaProducer,
             PaymentFeignClient paymentFeignClient
     ) {
         this.orderRepository = orderRepository;
@@ -61,6 +66,7 @@ public class OrderServiceImpl implements OrderService {
         this.cartItemService = cartItemService;
         this.billingFeignClient = billingFeignClient;
         this.paymentFeignClient = paymentFeignClient;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Override
@@ -134,12 +140,16 @@ public class OrderServiceImpl implements OrderService {
                 .information(createOrderRequest.getInformation())
                 .orderId(cartDAO.getCartId()) // Cho cart id là duy nhất :))
                 .build();
-        System.out.println("createPaymentRequest : " + createPaymentRequest);
-        CreatePaymentResponse createPaymentResponse = paymentFeignClient.doPayment(createPaymentRequest);
-        if (createPaymentResponse.getPaymentType() == null) {
-            throw new RunTimeExceptionPlaceHolder(StringConstant.ERROR_TEXT);
+        if(createPaymentRequest.getPaymentType().equals(PaymentType.VNPAY)){
+            CreatePaymentResponse createPaymentResponse = paymentFeignClient.doPayment(createPaymentRequest);
+            createOrderResponse.setPaymentUrl(createPaymentResponse.getUrlPayment());
+            if (createPaymentResponse.getPaymentType() == null) {
+                throw new RunTimeExceptionPlaceHolder(StringConstant.ERROR_TEXT);
+            }
+        }else{
+            kafkaProducer.send(StringConstant.KAFKA_PAYMENT, createPaymentRequest);
         }
-        System.out.println("createPaymentResponse : " + createPaymentResponse);
+
         /// save to local
         order.setPaid(false);
         order.setPaymentDate(null);
