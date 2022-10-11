@@ -1,10 +1,11 @@
 package com.bookstore.catalogservice.controller;
 
+import com.bookstore.catalogservice.common.response.CustomResponse;
 import com.bookstore.catalogservice.dao.ReviewDAO;
 import com.bookstore.catalogservice.service.ReviewService;
 import com.bookstore.catalogservice.vo.request.CreateOrUpdateReviewRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,15 +22,15 @@ public class ReviewController {
     }
 
     @PostMapping("/review")
-    public ResponseEntity<?> createOrUpdateReview(@RequestBody @Valid CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
+    public CustomResponse<?> createOrUpdateReview(@RequestBody @Valid CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
 
         reviewService.createOrUpdateReview(createOrUpdateReviewRequest);
-        return ResponseEntity.ok().build();
+        return new CustomResponse<>(HttpStatus.OK);
     }
 
     @GetMapping("/review")
-    public ResponseEntity<?> getAllReviewsForProduct(@RequestParam("productId") String productId) {
+    public CustomResponse<?> getAllReviewsForProduct(@RequestParam("productId") String productId) {
         List<ReviewDAO> reviewsForProduct = reviewService.getReviewsForProduct(productId);
-        return ResponseEntity.ok(reviewsForProduct);
+        return new CustomResponse<>(reviewsForProduct, HttpStatus.OK);
     }
 }

@@ -1,6 +1,7 @@
 package com.bookstore.catalogservice.controller;
 
 
+import com.bookstore.catalogservice.common.response.CustomResponse;
 import com.bookstore.catalogservice.service.ProducerService;
 import com.bookstore.catalogservice.service.ProductService;
 import com.bookstore.catalogservice.service.S3BucketStorageService;
@@ -31,7 +32,7 @@ public class ProducerController {
 
     @PostMapping("/producer")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> createProducer(
+    public CustomResponse<?> createProducer(
             @RequestParam(name = "producerName") String producerName,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "file") MultipartFile file
@@ -46,15 +47,13 @@ public class ProducerController {
                 .description(description)
                 .imgUrl(imgUrl)
                 .build();
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(producerService
-                        .createProducer(createOrUpdateProducerRequest));
+        return new CustomResponse<>(producerService
+                .createProducer(createOrUpdateProducerRequest), HttpStatus.OK);
     }
 
     @PutMapping("/producer")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> updateProducer(
+    public CustomResponse<?> updateProducer(
             @RequestParam(name = "producerName") String producerName,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "producerId") String producerId,
@@ -74,23 +73,19 @@ public class ProducerController {
                 .description(description)
                 .imgUrl(imgUrl)
                 .build();
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(producerService
-                        .createProducer(createOrUpdateProducerRequest));
+        return new CustomResponse<>(producerService
+                .createProducer(createOrUpdateProducerRequest), HttpStatus.OK);
     }
 
     @GetMapping("/producer")
-    public ResponseEntity<?> getAllProducer() {
+    public CustomResponse<?> getAllProducer() {
         List<ProducerResponse> producerResponses = producerService.getAllProducer();
-        return ResponseEntity.ok(producerResponses);
+        return new CustomResponse<>(producerResponses, HttpStatus.OK);
     }
 
     @GetMapping("/producer/{producerId}")
-    public ResponseEntity<?> getDetailProducer(@PathVariable String producerId) {
+    public CustomResponse<?> getDetailProducer(@PathVariable String producerId) {
         ProducerResponse producerResponse = producerService.getProducer(producerId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(producerResponse);
+        return new CustomResponse<>(producerResponse, HttpStatus.OK);
     }
 }

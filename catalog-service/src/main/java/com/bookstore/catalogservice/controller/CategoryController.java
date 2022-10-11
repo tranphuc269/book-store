@@ -1,5 +1,6 @@
 package com.bookstore.catalogservice.controller;
 
+import com.bookstore.catalogservice.common.response.CustomResponse;
 import com.bookstore.catalogservice.dao.CategoryDAO;
 import com.bookstore.catalogservice.service.CategoryService;
 import com.bookstore.catalogservice.service.S3BucketStorageService;
@@ -7,12 +8,13 @@ import com.bookstore.catalogservice.vo.request.CreateCategoryRequest;
 import com.bookstore.catalogservice.vo.request.UpdateCategoryRequest;
 import com.bookstore.catalogservice.vo.resonse.ProductCategoriesPagedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,9 +42,9 @@ public class CategoryController {
 
     @PostMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> createCategory(@RequestParam(name = "categoryName") String categoryName,
-                                            @RequestParam(name = "description") String description,
-                                            @RequestParam(name = "file") MultipartFile file
+    public CustomResponse<?> createCategory(@RequestParam(name = "categoryName") String categoryName,
+                                         @RequestParam(name = "description") String description,
+                                         @RequestParam(name = "file") MultipartFile file
                                                    ) {
         String imgUrl = s3BucketStorageService.uploadFileToS3(file);
         CreateCategoryRequest createCategoryRequest = CreateCategoryRequest
@@ -58,37 +60,39 @@ public class CategoryController {
                 .fromCurrentRequest().path("/{categoryId}")
                 .buildAndExpand(category).toUri();
 
-        return ResponseEntity.created(location).build();
+        return new CustomResponse<>(location, HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<CategoryDAO> getCategory(@PathVariable("categoryId") String categoryId) {
+    @Cacheable(value = "category", key = "#categoryId")
+    public CustomResponse<CategoryDAO> getCategory(@PathVariable("categoryId") String categoryId) {
 
         CategoryDAO categoryDAO = categoryService.getCategory(categoryId);
 
-        return ResponseEntity.ok(categoryDAO);
+        return new CustomResponse<>(categoryDAO, HttpStatus.OK);
     }
 
     @DeleteMapping("/category/{categoryId}")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> deleteCategory(@PathVariable("categoryId") String categoryId) {
+    public CustomResponse<?> deleteCategory(@PathVariable("categoryId") String categoryId) {
 
         categoryService.deleteCategory(categoryId);
 
-        return ResponseEntity.noContent().build();
+        return new CustomResponse<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> updateCategory(@RequestBody @Valid UpdateCategoryRequest updateCategoryRequest) {
+    public CustomResponse<?> updateCategory(@RequestBody @Valid UpdateCategoryRequest updateCategoryRequest) {
 
         categoryService.updateCategory(updateCategoryRequest);
 
-        return ResponseEntity.noContent().build();
+        return new CustomResponse<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(value = "/categories", produces = "application/json")
-    public ResponseEntity<?> getAllProductCategories(@RequestParam(value = "sort", required = false) String sort,
+    @Cacheable(value = "category", key = "")
+    public CustomResponse<?> getAllProductCategories(@RequestParam(value = "sort", required = false) String sort,
                                                      @RequestParam(value = "page", required = false) Integer page,
                                                      @RequestParam(value = "size", required = false) Integer size,
                                                      PagedResourcesAssembler<CategoryDAO> assembler) {
@@ -123,8 +127,7 @@ public class CategoryController {
         if (resource.getLink("last").isPresent()) {
             productCategoriesPagedResponse.get_links().put("last", resource.getLink("last").get().getHref());
         }
-    
-        return ResponseEntity.ok(productCategoriesPagedResponse);
 
+        return new CustomResponse<>(productCategoriesPagedResponse, HttpStatus.OK);
     }
 }

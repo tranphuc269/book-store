@@ -36,7 +36,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDAO getCategory(String categoryId) {
-
         Optional<CategoryDAO> categoryDAOOptional = categoryRepository.findById(categoryId);
 
         return categoryDAOOptional.orElseThrow(() -> new RuntimeException("Category doesn't exist!"));

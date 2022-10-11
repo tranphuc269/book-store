@@ -1,5 +1,6 @@
 package com.bookstore.catalogservice.controller;
 
+import com.bookstore.catalogservice.common.response.CustomResponse;
 import com.bookstore.catalogservice.common.util.CommonUtilityMethods;
 import com.bookstore.catalogservice.kafka.BookStoreKafkaProducer;
 import com.bookstore.catalogservice.service.ProductService;
@@ -16,6 +17,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -52,7 +54,7 @@ public class ProductController {
 
     @PostMapping("/product")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> createProduct(@RequestParam(name = "productName") String productName,
+    public CustomResponse<?> createProduct(@RequestParam(name = "productName") String productName,
                                            @RequestParam(name = "description") String description,
                                            @RequestParam(name = "price") double price,
                                            @RequestParam(name = "categoryId") String categoryId,
@@ -81,38 +83,38 @@ public class ProductController {
                 .fromCurrentRequest().path("/{productId}")
                 .buildAndExpand(product).toUri();
 
-        return ResponseEntity.created(location).build();
+        return new CustomResponse<>(location, HttpStatus.OK);
     }
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable("productId") String productId) {
+    public CustomResponse<ProductResponse> getProduct(@PathVariable("productId") String productId) {
 
         ProductResponse product = productService.getProduct(productId);
 
-        return ResponseEntity.ok(product);
+        return new CustomResponse<>(product, HttpStatus.OK);
     }
 
     @DeleteMapping("/product/{productId}")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> deleteProductCategory(@PathVariable("productId") String productId) {
+    public CustomResponse<?> deleteProductCategory(@PathVariable("productId") String productId) {
 
         productService.deleteProduct(productId);
 
-        return ResponseEntity.noContent().build();
+        return new CustomResponse<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/product")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<?> updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) {
+    public CustomResponse<?> updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) {
 
         productService.updateProduct(updateProductRequest);
 
-        return ResponseEntity.noContent().build();
+        return new CustomResponse<>(HttpStatus.NO_CONTENT);
     }
 
 
     @GetMapping(value = "/products", produces = "application/json")
-    public ResponseEntity<?> getAllProducts(@RequestParam(value = "sort", required = false) String sort,
+    public CustomResponse<?> getAllProducts(@RequestParam(value = "sort", required = false) String sort,
                                             @RequestParam(value = "page", required = false) Integer page,
                                             @RequestParam(value = "size", required = false) Integer size,
                                             PagedResourcesAssembler<ProductResponse> assembler) {
@@ -147,17 +149,17 @@ public class ProductController {
             productsPagedResponse.get_links().put("last", resource.getLink("last").get().getHref());
         }
 
-        return ResponseEntity.ok(productsPagedResponse);
+        return new CustomResponse<>(productsPagedResponse, HttpStatus.OK);
 
     }
 
 
     @PostMapping(value = "/add-to-cart")
-    public ResponseEntity<?> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem){
+    public CustomResponse<?> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = CommonUtilityMethods.getUserIdFromToken(authentication);
         createCartItem.setUserId(userId);
         kafkaProducer.send(StringConstant.ADD_PRODUCT_TO_CART_TOPIC, createCartItem);
-        return ResponseEntity.ok().build();
+        return new CustomResponse<>(HttpStatus.OK);
     }
 }
