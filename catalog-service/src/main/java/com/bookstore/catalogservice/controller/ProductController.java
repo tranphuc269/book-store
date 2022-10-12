@@ -1,6 +1,6 @@
 package com.bookstore.catalogservice.controller;
 
-import com.bookstore.catalogservice.common.response.CustomResponse;
+import com.bookstore.catalogservice.common.response.CommonResult;
 import com.bookstore.catalogservice.common.util.CommonUtilityMethods;
 import com.bookstore.catalogservice.kafka.BookStoreKafkaProducer;
 import com.bookstore.catalogservice.service.ProductService;
@@ -18,7 +18,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,13 +53,13 @@ public class ProductController {
 
     @PostMapping("/product")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public CustomResponse<?> createProduct(@RequestParam(name = "productName") String productName,
-                                           @RequestParam(name = "description") String description,
-                                           @RequestParam(name = "price") double price,
-                                           @RequestParam(name = "categoryId") String categoryId,
-                                           @RequestParam(name = "producerId") String producerId,
-                                           @RequestParam(name = "availableItemCount") int availableItemCount,
-                                           @RequestParam(name = "files") MultipartFile[] files
+    public CommonResult<String> createProduct(@RequestParam(name = "productName") String productName,
+                                      @RequestParam(name = "description") String description,
+                                      @RequestParam(name = "price") double price,
+                                      @RequestParam(name = "categoryId") String categoryId,
+                                      @RequestParam(name = "producerId") String producerId,
+                                      @RequestParam(name = "availableItemCount") int availableItemCount,
+                                      @RequestParam(name = "files") MultipartFile[] files
     ) {
         CreateProductRequest
                 createProductRequest = CreateProductRequest
@@ -83,38 +82,38 @@ public class ProductController {
                 .fromCurrentRequest().path("/{productId}")
                 .buildAndExpand(product).toUri();
 
-        return new CustomResponse<>(location, HttpStatus.OK);
+        return CommonResult.success("ok");
     }
 
     @GetMapping("/product/{productId}")
-    public CustomResponse<ProductResponse> getProduct(@PathVariable("productId") String productId) {
+    public CommonResult<ProductResponse> getProduct(@PathVariable("productId") String productId) {
 
         ProductResponse product = productService.getProduct(productId);
 
-        return new CustomResponse<>(product, HttpStatus.OK);
+        return CommonResult.success(product);
     }
 
     @DeleteMapping("/product/{productId}")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public CustomResponse<?> deleteProductCategory(@PathVariable("productId") String productId) {
+    public CommonResult<String> deleteProductCategory(@PathVariable("productId") String productId) {
 
         productService.deleteProduct(productId);
 
-        return new CustomResponse<>(HttpStatus.NO_CONTENT);
+        return CommonResult.success("ok");
     }
 
     @PutMapping("/product")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public CustomResponse<?> updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) {
+    public CommonResult<String> updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) {
 
         productService.updateProduct(updateProductRequest);
 
-        return new CustomResponse<>(HttpStatus.NO_CONTENT);
+        return CommonResult.success("ok");
     }
 
 
     @GetMapping(value = "/products", produces = "application/json")
-    public CustomResponse<?> getAllProducts(@RequestParam(value = "sort", required = false) String sort,
+    public CommonResult<ProductsPagedResponse> getAllProducts(@RequestParam(value = "sort", required = false) String sort,
                                             @RequestParam(value = "page", required = false) Integer page,
                                             @RequestParam(value = "size", required = false) Integer size,
                                             PagedResourcesAssembler<ProductResponse> assembler) {
@@ -149,17 +148,17 @@ public class ProductController {
             productsPagedResponse.get_links().put("last", resource.getLink("last").get().getHref());
         }
 
-        return new CustomResponse<>(productsPagedResponse, HttpStatus.OK);
+        return CommonResult.success(productsPagedResponse);
 
     }
 
 
     @PostMapping(value = "/add-to-cart")
-    public CustomResponse<?> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem){
+    public CommonResult<String> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = CommonUtilityMethods.getUserIdFromToken(authentication);
         createCartItem.setUserId(userId);
         kafkaProducer.send(StringConstant.ADD_PRODUCT_TO_CART_TOPIC, createCartItem);
-        return new CustomResponse<>(HttpStatus.OK);
+        return CommonResult.success("ok");
     }
 }

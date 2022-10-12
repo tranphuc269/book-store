@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+    public CategoryDAO updateCategory(UpdateCategoryRequest updateCategoryRequest) {
 
         //To check weather the category exist.
         CategoryDAO getCategory =
@@ -64,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setCreatedAt(getCategory.getCreatedAt());
 
         categoryRepository.save(category);
-
+        return  category;
     }
 
     @Override

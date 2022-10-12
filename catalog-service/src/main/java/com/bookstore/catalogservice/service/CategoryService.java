@@ -16,7 +16,7 @@ public interface CategoryService {
 
   void deleteCategory(String categoryId);
 
-  void updateCategory(UpdateCategoryRequest updateCategoryRequest);
+  CategoryDAO updateCategory(UpdateCategoryRequest updateCategoryRequest);
 
   Page<CategoryDAO> getCategories(String sort, Integer page, Integer size);
 }

@@ -1,6 +1,6 @@
 package com.bookstore.catalogservice.controller;
 
-import com.bookstore.catalogservice.common.response.CustomResponse;
+import com.bookstore.catalogservice.common.response.CommonResult;
 import com.bookstore.catalogservice.dao.ReviewDAO;
 import com.bookstore.catalogservice.service.ReviewService;
 import com.bookstore.catalogservice.vo.request.CreateOrUpdateReviewRequest;
@@ -22,15 +22,15 @@ public class ReviewController {
     }
 
     @PostMapping("/review")
-    public CustomResponse<?> createOrUpdateReview(@RequestBody @Valid CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
+    public CommonResult createOrUpdateReview(@RequestBody @Valid CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
 
         reviewService.createOrUpdateReview(createOrUpdateReviewRequest);
-        return new CustomResponse<>(HttpStatus.OK);
+        return CommonResult.success("ok");
     }
 
     @GetMapping("/review")
-    public CustomResponse<?> getAllReviewsForProduct(@RequestParam("productId") String productId) {
+    public CommonResult<List<ReviewDAO>> getAllReviewsForProduct(@RequestParam("productId") String productId) {
         List<ReviewDAO> reviewsForProduct = reviewService.getReviewsForProduct(productId);
-        return new CustomResponse<>(reviewsForProduct, HttpStatus.OK);
+        return CommonResult.success(reviewsForProduct);
     }
 }

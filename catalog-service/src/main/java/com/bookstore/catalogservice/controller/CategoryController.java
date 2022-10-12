@@ -1,6 +1,6 @@
 package com.bookstore.catalogservice.controller;
 
-import com.bookstore.catalogservice.common.response.CustomResponse;
+import com.bookstore.catalogservice.common.response.CommonResult;
 import com.bookstore.catalogservice.dao.CategoryDAO;
 import com.bookstore.catalogservice.service.CategoryService;
 import com.bookstore.catalogservice.service.S3BucketStorageService;
@@ -42,9 +42,9 @@ public class CategoryController {
 
     @PostMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public CustomResponse<?> createCategory(@RequestParam(name = "categoryName") String categoryName,
-                                         @RequestParam(name = "description") String description,
-                                         @RequestParam(name = "file") MultipartFile file
+    public CommonResult<URI> createCategory(@RequestParam(name = "categoryName") String categoryName,
+                                          @RequestParam(name = "description") String description,
+                                          @RequestParam(name = "file") MultipartFile file
                                                    ) {
         String imgUrl = s3BucketStorageService.uploadFileToS3(file);
         CreateCategoryRequest createCategoryRequest = CreateCategoryRequest
@@ -60,39 +60,39 @@ public class CategoryController {
                 .fromCurrentRequest().path("/{categoryId}")
                 .buildAndExpand(category).toUri();
 
-        return new CustomResponse<>(location, HttpStatus.NO_CONTENT);
+        return CommonResult.success(location);
     }
 
     @GetMapping("/category/{categoryId}")
     @Cacheable(value = "category", key = "#categoryId")
-    public CustomResponse<CategoryDAO> getCategory(@PathVariable("categoryId") String categoryId) {
+    public CommonResult<CategoryDAO> getCategory(@PathVariable("categoryId") String categoryId) {
 
         CategoryDAO categoryDAO = categoryService.getCategory(categoryId);
 
-        return new CustomResponse<>(categoryDAO, HttpStatus.OK);
+        return CommonResult.success(categoryDAO);
     }
 
     @DeleteMapping("/category/{categoryId}")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public CustomResponse<?> deleteCategory(@PathVariable("categoryId") String categoryId) {
+    public CommonResult<String> deleteCategory(@PathVariable("categoryId") String categoryId) {
 
         categoryService.deleteCategory(categoryId);
 
-        return new CustomResponse<>(HttpStatus.NO_CONTENT);
+        return CommonResult.success("ok");
     }
 
     @PutMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public CustomResponse<?> updateCategory(@RequestBody @Valid UpdateCategoryRequest updateCategoryRequest) {
+    public CommonResult<CategoryDAO> updateCategory(@RequestBody @Valid UpdateCategoryRequest updateCategoryRequest) {
 
-        categoryService.updateCategory(updateCategoryRequest);
+        CategoryDAO categoryDAO = categoryService.updateCategory(updateCategoryRequest);
 
-        return new CustomResponse<>(HttpStatus.NO_CONTENT);
+        return CommonResult.success(categoryDAO);
     }
 
     @GetMapping(value = "/categories", produces = "application/json")
     @Cacheable(value = "category", key = "")
-    public CustomResponse<?> getAllProductCategories(@RequestParam(value = "sort", required = false) String sort,
+    public CommonResult<ProductCategoriesPagedResponse> getAllProductCategories(@RequestParam(value = "sort", required = false) String sort,
                                                      @RequestParam(value = "page", required = false) Integer page,
                                                      @RequestParam(value = "size", required = false) Integer size,
                                                      PagedResourcesAssembler<CategoryDAO> assembler) {
@@ -127,7 +127,6 @@ public class CategoryController {
         if (resource.getLink("last").isPresent()) {
             productCategoriesPagedResponse.get_links().put("last", resource.getLink("last").get().getHref());
         }
-
-        return new CustomResponse<>(productCategoriesPagedResponse, HttpStatus.OK);
+        return CommonResult.success(productCategoriesPagedResponse);
     }
 }
