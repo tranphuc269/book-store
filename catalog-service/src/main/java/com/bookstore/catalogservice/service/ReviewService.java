@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ReviewService {
 
-    void createOrUpdateReview(CreateOrUpdateReviewRequest createOrUpdateReviewRequest);
+    ReviewDAO createOrUpdateReview(CreateOrUpdateReviewRequest createOrUpdateReviewRequest);
 
     List<ReviewDAO> getReviewsForProduct(String productId);
 

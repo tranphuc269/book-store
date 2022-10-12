@@ -25,7 +25,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public void createOrUpdateReview(CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
+    public ReviewDAO createOrUpdateReview(CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = CommonUtilityMethods.getUserIdFromToken(authentication);
         String userName = CommonUtilityMethods.getUserNameFromToken(authentication);
@@ -50,6 +50,7 @@ public class ReviewServiceImpl implements ReviewService {
                     .build();
         }
         reviewRepository.save(reviewDAO);
+        return reviewDAO;
     }
 
     @Override

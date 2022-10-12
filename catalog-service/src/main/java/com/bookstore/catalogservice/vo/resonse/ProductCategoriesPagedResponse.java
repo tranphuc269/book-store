@@ -1,17 +1,25 @@
 package com.bookstore.catalogservice.vo.resonse;
 
 import com.bookstore.catalogservice.dao.CategoryDAO;
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 
 @Data
-public class ProductCategoriesPagedResponse {
+@Builder
+@RedisHash()
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductCategoriesPagedResponse implements Serializable {
     
-    Page<CategoryDAO> data;
+    Page<CategoryResponse> data;
     Map<String, String> _links = new HashMap<>();
     
 }

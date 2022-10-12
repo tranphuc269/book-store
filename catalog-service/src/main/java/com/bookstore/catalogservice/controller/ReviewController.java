@@ -22,10 +22,14 @@ public class ReviewController {
     }
 
     @PostMapping("/review")
-    public CommonResult createOrUpdateReview(@RequestBody @Valid CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
+    public CommonResult<ReviewDAO> createOrUpdateReview(@RequestBody @Valid CreateOrUpdateReviewRequest createOrUpdateReviewRequest) {
 
-        reviewService.createOrUpdateReview(createOrUpdateReviewRequest);
-        return CommonResult.success("ok");
+        try {
+            ReviewDAO reviewDAO = reviewService.createOrUpdateReview(createOrUpdateReviewRequest);
+            return CommonResult.success(reviewDAO);
+        }catch (Exception e){
+            return  CommonResult.forbidden(null);
+        }
     }
 
     @GetMapping("/review")

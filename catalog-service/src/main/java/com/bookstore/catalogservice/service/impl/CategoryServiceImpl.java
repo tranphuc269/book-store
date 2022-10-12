@@ -5,7 +5,9 @@ import com.bookstore.catalogservice.repository.CategoryRepository;
 import com.bookstore.catalogservice.service.CategoryService;
 import com.bookstore.catalogservice.vo.request.CreateCategoryRequest;
 import com.bookstore.catalogservice.vo.request.UpdateCategoryRequest;
+import com.bookstore.catalogservice.vo.resonse.CategoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +15,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -35,10 +40,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDAO getCategory(String categoryId) {
+    public CategoryResponse getCategory(String categoryId) {
+        System.out.println("categoryId : " + categoryId);
         Optional<CategoryDAO> categoryDAOOptional = categoryRepository.findById(categoryId);
 
-        return categoryDAOOptional.orElseThrow(() -> new RuntimeException("Category doesn't exist!"));
+        if (categoryDAOOptional.isEmpty()) {
+            throw new RuntimeException("Category doesn't exist!");
+        }
+        return CategoryResponse
+                .builder()
+                .id(categoryDAOOptional.get().getCategoryId())
+                .name(categoryDAOOptional.get().getCategoryName())
+                .description(categoryDAOOptional.get().getDescription())
+                .imgUrl(categoryDAOOptional.get().getImgUrl())
+                .build();
     }
 
     @Override
@@ -49,11 +64,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDAO updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+    public CategoryResponse updateCategory(UpdateCategoryRequest updateCategoryRequest) {
 
         //To check weather the category exist.
         CategoryDAO getCategory =
-                this.getCategory(updateCategoryRequest.getCategoryId());
+                categoryRepository.findById(updateCategoryRequest.getCategoryId()).get();
 
         CategoryDAO category = CategoryDAO.builder()
                 .categoryId(updateCategoryRequest.getCategoryId())
@@ -64,11 +79,17 @@ public class CategoryServiceImpl implements CategoryService {
         category.setCreatedAt(getCategory.getCreatedAt());
 
         categoryRepository.save(category);
-        return  category;
+        return CategoryResponse
+                .builder()
+                .id(category.getCategoryId())
+                .name(category.getCategoryName())
+                .description(category.getDescription())
+                .imgUrl(category.getImgUrl())
+                .build();
     }
 
     @Override
-    public Page<CategoryDAO> getCategories(String sort, Integer page, Integer size) {
+    public List<CategoryResponse> getCategories(String sort, Integer page, Integer size) {
 
 
         //set defaults
@@ -96,6 +117,17 @@ public class CategoryServiceImpl implements CategoryService {
             }
 
         }
-        return categoryRepository.findAll(pageable);
+        Page<CategoryDAO> entities = categoryRepository.findAll(pageable);
+        List<CategoryResponse> responses = new ArrayList<>();
+        entities.forEach(entity->{
+            responses.add(CategoryResponse
+                    .builder()
+                    .id(entity.getCategoryId())
+                    .name(entity.getCategoryName())
+                    .description(entity.getDescription())
+                    .imgUrl(entity.getImgUrl())
+                    .build());
+        });
+        return responses;
     }
 }

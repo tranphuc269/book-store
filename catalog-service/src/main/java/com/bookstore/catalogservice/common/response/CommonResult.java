@@ -63,6 +63,10 @@ public class CommonResult<T> implements Serializable {
         return new CommonResult<T>(ResultCode.FORBIDDEN.getCode(), ResultCode.FORBIDDEN.getMessage(), data);
     }
 
+    public static <T> CommonResult<T> badRequest(T data) {
+        return new CommonResult<T>(ResultCode.BAD_REQUEST.getCode(), ResultCode.BAD_REQUEST.getMessage(), data);
+    }
+
     public long getCode() {
         return code;
     }

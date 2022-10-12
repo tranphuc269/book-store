@@ -6,6 +6,7 @@ import com.bookstore.catalogservice.service.CategoryService;
 import com.bookstore.catalogservice.service.S3BucketStorageService;
 import com.bookstore.catalogservice.vo.request.CreateCategoryRequest;
 import com.bookstore.catalogservice.vo.request.UpdateCategoryRequest;
+import com.bookstore.catalogservice.vo.resonse.CategoryResponse;
 import com.bookstore.catalogservice.vo.resonse.ProductCategoriesPagedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 
 @RestController
@@ -43,9 +45,9 @@ public class CategoryController {
     @PostMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
     public CommonResult<URI> createCategory(@RequestParam(name = "categoryName") String categoryName,
-                                          @RequestParam(name = "description") String description,
-                                          @RequestParam(name = "file") MultipartFile file
-                                                   ) {
+                                            @RequestParam(name = "description") String description,
+                                            @RequestParam(name = "file") MultipartFile file
+    ) {
         String imgUrl = s3BucketStorageService.uploadFileToS3(file);
         CreateCategoryRequest createCategoryRequest = CreateCategoryRequest
                 .builder()
@@ -64,12 +66,12 @@ public class CategoryController {
     }
 
     @GetMapping("/category/{categoryId}")
-    @Cacheable(value = "category", key = "#categoryId")
-    public CommonResult<CategoryDAO> getCategory(@PathVariable("categoryId") String categoryId) {
+    @Cacheable(value = "/category/", key = "#categoryId")
+    public CommonResult<CategoryResponse> getCategory(@PathVariable("categoryId") String categoryId) {
 
-        CategoryDAO categoryDAO = categoryService.getCategory(categoryId);
+        CategoryResponse category = categoryService.getCategory(categoryId);
 
-        return CommonResult.success(categoryDAO);
+        return CommonResult.success(category);
     }
 
     @DeleteMapping("/category/{categoryId}")
@@ -83,50 +85,49 @@ public class CategoryController {
 
     @PutMapping("/category")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public CommonResult<CategoryDAO> updateCategory(@RequestBody @Valid UpdateCategoryRequest updateCategoryRequest) {
+    public CommonResult<CategoryResponse> updateCategory(@RequestBody @Valid UpdateCategoryRequest updateCategoryRequest) {
 
-        CategoryDAO categoryDAO = categoryService.updateCategory(updateCategoryRequest);
+        CategoryResponse category = categoryService.updateCategory(updateCategoryRequest);
 
-        return CommonResult.success(categoryDAO);
+        return CommonResult.success(category);
     }
 
     @GetMapping(value = "/categories", produces = "application/json")
-    @Cacheable(value = "category", key = "")
-    public CommonResult<ProductCategoriesPagedResponse> getAllProductCategories(@RequestParam(value = "sort", required = false) String sort,
-                                                     @RequestParam(value = "page", required = false) Integer page,
-                                                     @RequestParam(value = "size", required = false) Integer size,
-                                                     PagedResourcesAssembler<CategoryDAO> assembler) {
-    
-        Page<CategoryDAO> list = categoryService.getCategories(sort, page, size);
-    
-        Link link = Link.of(ServletUriComponentsBuilder.fromCurrentRequest()
-                                                        .build()
-                                                        .toUriString());
+    @Cacheable(value = "/categories?", key = "#sort+#page+#size")
+    public CommonResult<List<CategoryResponse>> getAllProductCategories(@RequestParam(value = "sort", required = false) String sort,
+                                                                                @RequestParam(value = "page", required = false) Integer page,
+                                                                                @RequestParam(value = "size", required = false) Integer size) {
 
-        PagedModel<EntityModel<CategoryDAO>> resource = assembler.toModel(list, link);
-    
-        ProductCategoriesPagedResponse productCategoriesPagedResponse = new ProductCategoriesPagedResponse();
-        productCategoriesPagedResponse.setData(list);
+        List<CategoryResponse> list = categoryService.getCategories(sort, page, size);
 
-        if (resource.getLink("first").isPresent()) {
-            productCategoriesPagedResponse.get_links().put("first", resource.getLink("first").get().getHref());
-        }
+//        Link link = Link.of(ServletUriComponentsBuilder.fromCurrentRequest()
+//                .build()
+//                .toUriString());
 
-        if (resource.getLink("prev").isPresent()) {
-            productCategoriesPagedResponse.get_links().put("prev", resource.getLink("prev").get().getHref());
-        }
-
-        if (resource.getLink("self").isPresent()) {
-            productCategoriesPagedResponse.get_links().put("self", resource.getLink("self").get().getHref());
-        }
-
-        if (resource.getLink("next").isPresent()) {
-            productCategoriesPagedResponse.get_links().put("next", resource.getLink("next").get().getHref());
-        }
-
-        if (resource.getLink("last").isPresent()) {
-            productCategoriesPagedResponse.get_links().put("last", resource.getLink("last").get().getHref());
-        }
-        return CommonResult.success(productCategoriesPagedResponse);
+//        PagedModel<EntityModel<CategoryResponse>> resource = assembler.toModel(list, link);
+//
+//        ProductCategoriesPagedResponse productCategoriesPagedResponse = new ProductCategoriesPagedResponse();
+//        productCategoriesPagedResponse.setData(list);
+//
+//        if (resource.getLink("first").isPresent()) {
+//            productCategoriesPagedResponse.get_links().put("first", resource.getLink("first").get().getHref());
+//        }
+//
+//        if (resource.getLink("prev").isPresent()) {
+//            productCategoriesPagedResponse.get_links().put("prev", resource.getLink("prev").get().getHref());
+//        }
+//
+//        if (resource.getLink("self").isPresent()) {
+//            productCategoriesPagedResponse.get_links().put("self", resource.getLink("self").get().getHref());
+//        }
+//
+//        if (resource.getLink("next").isPresent()) {
+//            productCategoriesPagedResponse.get_links().put("next", resource.getLink("next").get().getHref());
+//        }
+//
+//        if (resource.getLink("last").isPresent()) {
+//            productCategoriesPagedResponse.get_links().put("last", resource.getLink("last").get().getHref());
+//        }
+        return CommonResult.success(list);
     }
 }

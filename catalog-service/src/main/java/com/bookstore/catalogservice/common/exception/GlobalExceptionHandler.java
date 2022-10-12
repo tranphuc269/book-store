@@ -1,5 +1,6 @@
 package com.bookstore.catalogservice.common.exception;
 
+import com.bookstore.catalogservice.common.response.CommonResult;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,44 +16,44 @@ import java.util.UUID;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(RunTimeExceptionPlaceHolder.class)
-  public CustomResponse<ErrorResponse> handleCustomException(RunTimeExceptionPlaceHolder ex) {
+  public CommonResult<ErrorResponse> handleCustomException(RunTimeExceptionPlaceHolder ex) {
 
     ErrorResponse errorResponse = populateErrorResponse("400", ex.getMessage());
     log.error("Something went wrong, Exception : " + ex.getMessage());
     ex.printStackTrace();
-    return new CustomResponse<>(errorResponse, HttpStatus.BAD_REQUEST);
+    return CommonResult.badRequest(errorResponse);
 
   }
 
   @ExceptionHandler(InvalidFormatException.class)
-  public CustomResponse<ErrorResponse> handleCustomException(InvalidFormatException ex) {
+  public CommonResult<ErrorResponse> handleCustomException(InvalidFormatException ex) {
 
     ErrorResponse errorResponse = populateErrorResponse("400", ex.getMessage());
     log.error("Something went wrong, Exception : " + ex.getMessage());
     ex.printStackTrace();
-    return new CustomResponse<>(errorResponse, HttpStatus.BAD_REQUEST);
+    return CommonResult.badRequest(errorResponse);
 
   }
 
   @ExceptionHandler(Exception.class)
-  public CustomResponse<ErrorResponse> handleCustomException(Exception ex) {
+  public CommonResult<ErrorResponse> handleCustomException(Exception ex) {
 
     ErrorResponse errorResponse = populateErrorResponse("500",
             ex.getMessage());
     log.error("Something went wrong, Exception : " + ex.getMessage());
     ex.printStackTrace();
-    return new CustomResponse<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    return CommonResult.failed();
 
   }
 
   @ExceptionHandler(AccessDeniedException.class)
-  public CustomResponse<ErrorResponse> handleCustomException(AccessDeniedException ex) {
+  public CommonResult<ErrorResponse> handleCustomException(AccessDeniedException ex) {
 
     ErrorResponse errorResponse = populateErrorResponse("401",
             ex.getMessage());
     log.error("Something went wrong, Exception : " + ex.getMessage());
     ex.printStackTrace();
-    return new CustomResponse<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    return CommonResult.unauthorized(null);
 
   }
 
