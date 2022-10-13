@@ -9,15 +9,14 @@ import com.bookstore.catalogservice.utils.StringConstant;
 import com.bookstore.catalogservice.vo.request.CreateCartItem;
 import com.bookstore.catalogservice.vo.request.CreateProductRequest;
 import com.bookstore.catalogservice.vo.resonse.ProductResponse;
-import com.bookstore.catalogservice.vo.resonse.ProductsPagedResponse;
 import com.bookstore.catalogservice.vo.resonse.UpdateProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +35,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -54,12 +54,12 @@ public class ProductController {
     @PostMapping("/product")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
     public CommonResult<String> createProduct(@RequestParam(name = "productName") String productName,
-                                      @RequestParam(name = "description") String description,
-                                      @RequestParam(name = "price") double price,
-                                      @RequestParam(name = "categoryId") String categoryId,
-                                      @RequestParam(name = "producerId") String producerId,
-                                      @RequestParam(name = "availableItemCount") int availableItemCount,
-                                      @RequestParam(name = "files") MultipartFile[] files
+                                              @RequestParam(name = "description") String description,
+                                              @RequestParam(name = "price") double price,
+                                              @RequestParam(name = "categoryId") String categoryId,
+                                              @RequestParam(name = "producerId") String producerId,
+                                              @RequestParam(name = "availableItemCount") int availableItemCount,
+                                              @RequestParam(name = "files") MultipartFile[] files
     ) {
         CreateProductRequest
                 createProductRequest = CreateProductRequest
@@ -78,14 +78,11 @@ public class ProductController {
         }
         String product = productService.createProduct(createProductRequest);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{productId}")
-                .buildAndExpand(product).toUri();
-
         return CommonResult.success("ok");
     }
 
     @GetMapping("/product/{productId}")
+    @Cacheable(value = "/product", key = "#productId")
     public CommonResult<ProductResponse> getProduct(@PathVariable("productId") String productId) {
 
         ProductResponse product = productService.getProduct(productId);
@@ -113,48 +110,23 @@ public class ProductController {
 
 
     @GetMapping(value = "/products", produces = "application/json")
-    public CommonResult<ProductsPagedResponse> getAllProducts(@RequestParam(value = "sort", required = false) String sort,
-                                            @RequestParam(value = "page", required = false) Integer page,
-                                            @RequestParam(value = "size", required = false) Integer size,
-                                            PagedResourcesAssembler<ProductResponse> assembler) {
+    @Cacheable(value = "/products?", key = "#sort+#page+#size")
+    public CommonResult<List<ProductResponse>> getAllProducts(@RequestParam(value = "sort", required = false) String sort,
+                                                              @RequestParam(value = "page", required = false) Integer page,
+                                                              @RequestParam(value = "size", required = false) Integer size) {
 
         Page<ProductResponse> list = productService.getAllProducts(sort, page, size);
 
-        Link link = Link.of(ServletUriComponentsBuilder.fromCurrentRequest().build()
-                .toUriString());
+        List<ProductResponse> productResponses = new ArrayList<>();
+        list.forEach(productResponses::add);
 
-        PagedModel<EntityModel<ProductResponse>> resource = assembler.toModel(list, link);
-
-        ProductsPagedResponse productsPagedResponse = new ProductsPagedResponse();
-        productsPagedResponse.setPage(list);
-
-        if (resource.getLink("first").isPresent()) {
-            productsPagedResponse.get_links().put("first", resource.getLink("first").get().getHref());
-        }
-
-        if (resource.getLink("prev").isPresent()) {
-            productsPagedResponse.get_links().put("prev", resource.getLink("prev").get().getHref());
-        }
-
-        if (resource.getLink("self").isPresent()) {
-            productsPagedResponse.get_links().put("self", resource.getLink("self").get().getHref());
-        }
-
-        if (resource.getLink("next").isPresent()) {
-            productsPagedResponse.get_links().put("next", resource.getLink("next").get().getHref());
-        }
-
-        if (resource.getLink("last").isPresent()) {
-            productsPagedResponse.get_links().put("last", resource.getLink("last").get().getHref());
-        }
-
-        return CommonResult.success(productsPagedResponse);
+        return CommonResult.success(productResponses);
 
     }
 
 
     @PostMapping(value = "/add-to-cart")
-    public CommonResult<String> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem){
+    public CommonResult<String> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = CommonUtilityMethods.getUserIdFromToken(authentication);
         createCartItem.setUserId(userId);

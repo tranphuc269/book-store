@@ -1,21 +1,13 @@
 package com.bookstore.catalogservice.controller;
 
 import com.bookstore.catalogservice.common.response.CommonResult;
-import com.bookstore.catalogservice.dao.CategoryDAO;
 import com.bookstore.catalogservice.service.CategoryService;
 import com.bookstore.catalogservice.service.S3BucketStorageService;
 import com.bookstore.catalogservice.vo.request.CreateCategoryRequest;
 import com.bookstore.catalogservice.vo.request.UpdateCategoryRequest;
 import com.bookstore.catalogservice.vo.resonse.CategoryResponse;
-import com.bookstore.catalogservice.vo.resonse.ProductCategoriesPagedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

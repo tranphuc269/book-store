@@ -8,6 +8,7 @@ import com.bookstore.catalogservice.service.S3BucketStorageService;
 import com.bookstore.catalogservice.vo.request.CreateOrUpdateProducerRequest;
 import com.bookstore.catalogservice.vo.resonse.producer.ProducerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -76,12 +77,14 @@ public class ProducerController {
     }
 
     @GetMapping("/producer")
+    @Cacheable(value = "/producer", key = "")
     public CommonResult<List<ProducerResponse>> getAllProducer() {
         List<ProducerResponse> producerResponses = producerService.getAllProducer();
         return CommonResult.success(producerResponses);
     }
 
     @GetMapping("/producer/{producerId}")
+    @Cacheable(value = "/producer", key = "#producerId")
     public CommonResult<ProducerResponse> getDetailProducer(@PathVariable String producerId) {
         ProducerResponse producerResponse = producerService.getProducer(producerId);
         return CommonResult.success(producerResponse);
