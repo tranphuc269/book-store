@@ -4,6 +4,7 @@ import com.bookstore.searchservice.domain.ProductEsModel;
 import com.bookstore.searchservice.domain.dao.ProductDAO;
 import com.bookstore.searchservice.repository.IProductDAORepository;
 import com.bookstore.searchservice.repository.IProductEsRepository;
+import com.bookstore.searchservice.repository.IProductEsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ import java.util.List;
 @Service
 public class ElasticSynchronizer {
 
-    private IProductDAORepository productDAORepository;
-    private IProductEsRepository productEsRepository;
+    private final IProductDAORepository productDAORepository;
+    private final IProductEsRepository productEsRepository;
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSynchronizer.class);
 
@@ -46,14 +47,14 @@ public class ElasticSynchronizer {
     }
 
     private void syncProducts() {
-//
 //        Specification<ProductDAO> userSpecification = (root, criteriaQuery, criteriaBuilder) ->
-//                getModificationDatePredicate(criteriaBuilder, root);
+//        Specification<ProductDAO> userSpecification = (root, criteriaQuery, criteriaBuilder) ->
+//        getModificationDatePredicate(criteriaBuilder, root);
         List<ProductDAO> productDAOList = new ArrayList<>();
         productDAOList = productDAORepository.findAll();
         productEsRepository.deleteAll();
         for (ProductDAO productDAO : productDAOList) {
-            LOG.info("Syncing User - {}", productDAO.getProductId());
+            LOG.info("Syncing Product - {}", productDAO.getProductId());
             productEsRepository.save(ProductEsModel
                     .builder()
                     .productId(productDAO.getProductId())

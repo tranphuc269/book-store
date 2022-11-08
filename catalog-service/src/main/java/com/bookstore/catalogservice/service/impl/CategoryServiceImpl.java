@@ -3,6 +3,7 @@ package com.bookstore.catalogservice.service.impl;
 import com.bookstore.catalogservice.dao.CategoryDAO;
 import com.bookstore.catalogservice.repository.CategoryRepository;
 import com.bookstore.catalogservice.service.CategoryService;
+import com.bookstore.catalogservice.utils.ObjectStatus;
 import com.bookstore.catalogservice.vo.request.CreateCategoryRequest;
 import com.bookstore.catalogservice.vo.request.UpdateCategoryRequest;
 import com.bookstore.catalogservice.vo.resonse.CategoryResponse;
@@ -34,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .description(createCategoryRequest.getDescription())
                 .imgUrl(createCategoryRequest.getImgUrl())
                 .build();
-
+        categoryDAO.setStatus(ObjectStatus.ACTIVE.name());
         CategoryDAO savedCategory = categoryRepository.save(categoryDAO);
         return savedCategory.getCategoryId();
     }
@@ -57,10 +58,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(String categoryId) {
-
-        categoryRepository.deleteById(categoryId);
-
+    public CategoryResponse deleteCategory(String categoryId) {
+        CategoryDAO categoryDAO = categoryRepository.findById(categoryId).get();
+        categoryDAO.setStatus(ObjectStatus.INACTIVE.name());
+        categoryRepository.save(categoryDAO);
+//        categoryRepository.deleteById(categoryId);
+        return CategoryResponse
+                .builder()
+                .id(categoryDAO.getCategoryId())
+                .name(categoryDAO.getCategoryName())
+                .description(categoryDAO.getDescription())
+                .imgUrl(categoryDAO.getImgUrl())
+                .build();
     }
 
     @Override

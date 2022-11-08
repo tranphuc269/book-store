@@ -3,6 +3,7 @@ package com.bookstore.catalogservice.service.impl;
 import com.bookstore.catalogservice.dao.ProducerDAO;
 import com.bookstore.catalogservice.repository.ProducerRepository;
 import com.bookstore.catalogservice.service.ProducerService;
+import com.bookstore.catalogservice.utils.ObjectStatus;
 import com.bookstore.catalogservice.vo.request.CreateOrUpdateProducerRequest;
 import com.bookstore.catalogservice.vo.resonse.producer.ProducerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class ProducerServiceImpl implements ProducerService {
                     .description(createProducerRequest.getDescription())
                     .imgUrl(createProducerRequest.getImgUrl())
                     .build();
+            producerDAO.setStatus(ObjectStatus.ACTIVE.name());
             producerRepository.save(producerDAO);
             return true;
         } catch (Exception e) {

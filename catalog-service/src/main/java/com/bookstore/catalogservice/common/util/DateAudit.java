@@ -31,4 +31,7 @@ public abstract class DateAudit implements Serializable {
   @Column(name = "updated_at")
   private Instant updatedAt;
 
+  @Column(name = "status")
+  private String status;
+
 }
