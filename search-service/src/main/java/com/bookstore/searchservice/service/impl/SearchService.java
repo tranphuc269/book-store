@@ -60,10 +60,9 @@ public class SearchService implements ISearchService {
                                 .getJSONObject(Constants.HITS)
                                 .getJSONArray(Constants.HITS)
                                 .toString());
-                System.out.println("myObject.getJSONObject(Constants.HITS) : " + myObject.getJSONObject(Constants.HITS));
                 resultQuery
-                        .setNumberOfResults(myObject.getJSONObject(Constants.HITS).getJSONObject("value")
-                                .getInt(Constants.TOTAL_HITS));
+                        .setNumberOfResults(myObject.getJSONObject(Constants.HITS).getJSONObject(Constants.TOTAL_HITS)
+                                .getInt(Constants.RESULT_VALUE));
                 resultQuery.setTimeTook((float) ((double) myObject.getInt(Constants.TOOK) / Constants.TO_MS));
             } else {
                 resultQuery.setElements(null);

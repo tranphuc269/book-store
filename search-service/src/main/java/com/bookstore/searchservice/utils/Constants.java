@@ -14,6 +14,8 @@ public final class Constants {
     public static final String HITS = "hits";
     public static final String TOOK = "took";
     public static final String TOTAL_HITS = "total";
+
+    public static final String RESULT_VALUE = "value";
     public static final String CONTENT_ACCEPT = "Accept";
     public static final String APP_TYPE = "application/json";
     public static final String CONTENT_TYPE = "Content-type";
