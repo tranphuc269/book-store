@@ -110,7 +110,7 @@ public class ProductController {
 
 
     @GetMapping(value = "/products", produces = "application/json")
-    @Cacheable(value = "/products?", key = "#sort+#page+#size")
+    @Cacheable(value = "products?", key = "#sort+#page+#size")
     public CommonResult<List<ProductResponse>> getAllProducts(@RequestParam(value = "sort", required = false) String sort,
                                                               @RequestParam(value = "page", required = false) Integer page,
                                                               @RequestParam(value = "size", required = false) Integer size) {
@@ -124,6 +124,14 @@ public class ProductController {
 
     }
 
+
+    @GetMapping(value = "/products/product", produces = "application/json")
+    @Cacheable(value = "producerId", key = "#producerId")
+    public CommonResult<List<ProductResponse>> getProductByProducerId(
+            @RequestParam(value = "producerId", required = false) String producerId) {
+        List<ProductResponse> productResponses = productService.getProductByProducerId(producerId);
+        return CommonResult.success(productResponses);
+    }
 
     @PostMapping(value = "/add-to-cart")
     public CommonResult<String> addProductToCart(@RequestBody @Valid CreateCartItem createCartItem) {
