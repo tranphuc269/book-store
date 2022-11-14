@@ -27,7 +27,7 @@ public class Main {
         StockObjectList stockObjectList = new Gson().fromJson(response.toString(), StockObjectList.class);
         CSVStock[] stocks = new CSVStock[stockObjectList.data.size()];
         for(int i = 0; i < stockObjectList.data.size(); i++){
-            stocks[i] = new CSVStock(stockObjectList.data.get(i).getNGD().split("T")[0], stockObjectList.data.get(i).getGDC());
+            stocks[stockObjectList.data.size() - 1 - i] = new CSVStock(stockObjectList.data.get(i).getNGD().split("T")[0], stockObjectList.data.get(i).getGDC());
         }
         generateCSV(new File("example_wp_log_peyton_manning.csv"), stocks);
         reader.close();
