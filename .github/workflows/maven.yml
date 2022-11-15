@@ -30,14 +30,14 @@ jobs:
       - name: Change dir
         run: cd discovery-service
       - name: Build with Maven
-        run: mvn clean install
+        run: cd discovery-service >> mvn clean install
       - name: Build & push Docker image
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
           image: tugjabg/bookstore
           tags: latest
           registry: docker.io
-          dockerfile: Dockerfile
+          dockerfile: discovery-service/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
