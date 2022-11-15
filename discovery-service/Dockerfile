@@ -1,4 +1,4 @@
 FROM openjdk:11
-EXPOSE 8761
-ADD target/discovery-service.jar discovery-service.jar
-ENTRYPOINT ["java", "-jar", "/discovery-service.jar"]
+EXPOSE 8080
+ADD discovery-service/target/discovery-service.jar discovery-service/discovery-service.jar
+ENTRYPOINT ["java", "-jar", "discovery-service/discovery-service.jar"]
