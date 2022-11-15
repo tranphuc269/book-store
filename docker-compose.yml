@@ -1,0 +1,19 @@
+version: "3.4"
+
+services :
+
+  #discovery-service
+  bookstore-consul-discovery:
+    hostname: bookstore-discovery
+    image: discovery
+    container_name: bookstore-discovery
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - bookstore-app-network
+
+
+
+
+  networks:
