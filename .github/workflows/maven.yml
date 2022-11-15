@@ -34,7 +34,7 @@ jobs:
       - name: Build & push Docker image
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
-          image: tugjabg/bookstore
+          image: tugjabg/book-store-discovery-service
           tags: latest
           registry: docker.io
           dockerfile: discovery-service/Dockerfile

@@ -48,7 +48,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<finalName>eureka-app</finalName>
+		<finalName>discovery-service</finalName>
 	</build>
 
 </project>
