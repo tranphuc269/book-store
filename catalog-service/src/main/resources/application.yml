@@ -49,12 +49,12 @@ spring:
     show-sql: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://bookstore.ccz3nxew3wxs.ap-southeast-1.rds.amazonaws.com:3306/catalogservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: admin
-    password: jerrytran97
-#    url: jdbc:mysql://localhost:3306/catalogservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-#    username: root
-#    password: Jerrytran97@
+#    url: jdbc:mysql://bookstore.ccz3nxew3wxs.ap-southeast-1.rds.amazonaws.com:3306/catalogservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+#    username: admin
+#    password: jerrytran97
+    url: jdbc:mysql://localhost:3306/catalogservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: Jerrytran97@
   cache:
     type: redis
   redis:
@@ -82,6 +82,10 @@ management:
   security:
     enabled: false
 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: https://ef40-2402-800-61b1-9a2c-c474-bcbe-98c0-1b15.ap.ngrok.io
 
 cloud:
   aws:

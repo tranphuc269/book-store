@@ -2,11 +2,11 @@
 spring:
   application:
     name: apigateway-service
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: guest
+#    password: guest
   cloud:
     gateway:
       routes:
@@ -68,7 +68,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://ec2-54-153-36-214.us-west-1.compute.amazonaws.com:8761/eureka
 
 
 management:

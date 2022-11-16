@@ -15,32 +15,32 @@ on:
     branches: [ "main" ]
 
 jobs:
-  discovery-service:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        run: cd discovery-service && mvn clean install
-      - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: tugjabg/book-store-discovery-service
-          tags: latest
-          registry: docker.io
-          dockerfile: discovery-service/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-#      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-#      - name: Update dependency graph
-#        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+#  discovery-service:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Build with Maven
+#        run: cd discovery-service && mvn clean install
+#      - name: Build & push Docker image
+#        uses: mr-smithers-excellent/docker-build-push@v5
+#        with:
+#          image: tugjabg/book-store-discovery-service
+#          tags: latest
+#          registry: docker.io
+#          dockerfile: discovery-service/Dockerfile
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+##      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+##      - name: Update dependency graph
+##        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
   apigateway-service:
 
     runs-on: ubuntu-latest
@@ -64,129 +64,129 @@ jobs:
           dockerfile: apigateway-service/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-  auth-service:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        run: cd auth-service && mvn clean install
-      - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: tugjabg/book-store-auth-service
-          tags: latest
-          registry: docker.io
-          dockerfile: auth-service/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-  billing-service:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        run: cd billing-service && mvn clean install
-      - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: tugjabg/book-store-billing-service
-          tags: latest
-          registry: docker.io
-          dockerfile: billing-service/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-  catalog-service:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
-      - name: Change dir
-        run: cd catalog-service
-      - name: Build with Maven
-        run: cd catalog-service && mvn clean install
-      - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: tugjabg/book-store-catalog-service
-          tags: latest
-          registry: docker.io
-          dockerfile: catalog-service/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-  order-service:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
-      - name: Change dir
-        run: cd order-service
-      - name: Build with Maven
-        run: cd order-service && mvn clean install
-      - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: tugjabg/book-store-order-service
-          tags: latest
-          registry: docker.io
-          dockerfile: order-service/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-  payment-service:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
-      - name: Change dir
-        run: cd order-service
-      - name: Build with Maven
-        run: cd payment-service && mvn clean install
-      - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: tugjabg/book-store-payment-service
-          tags: latest
-          registry: docker.io
-          dockerfile: payment-service/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#  auth-service:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Build with Maven
+#        run: cd auth-service && mvn clean install
+#      - name: Build & push Docker image
+#        uses: mr-smithers-excellent/docker-build-push@v5
+#        with:
+#          image: tugjabg/book-store-auth-service
+#          tags: latest
+#          registry: docker.io
+#          dockerfile: auth-service/Dockerfile
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#  billing-service:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Build with Maven
+#        run: cd billing-service && mvn clean install
+#      - name: Build & push Docker image
+#        uses: mr-smithers-excellent/docker-build-push@v5
+#        with:
+#          image: tugjabg/book-store-billing-service
+#          tags: latest
+#          registry: docker.io
+#          dockerfile: billing-service/Dockerfile
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#  catalog-service:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Change dir
+#        run: cd catalog-service
+#      - name: Build with Maven
+#        run: cd catalog-service && mvn clean install
+#      - name: Build & push Docker image
+#        uses: mr-smithers-excellent/docker-build-push@v5
+#        with:
+#          image: tugjabg/book-store-catalog-service
+#          tags: latest
+#          registry: docker.io
+#          dockerfile: catalog-service/Dockerfile
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#  order-service:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Change dir
+#        run: cd order-service
+#      - name: Build with Maven
+#        run: cd order-service && mvn clean install
+#      - name: Build & push Docker image
+#        uses: mr-smithers-excellent/docker-build-push@v5
+#        with:
+#          image: tugjabg/book-store-order-service
+#          tags: latest
+#          registry: docker.io
+#          dockerfile: order-service/Dockerfile
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#  payment-service:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Change dir
+#        run: cd order-service
+#      - name: Build with Maven
+#        run: cd payment-service && mvn clean install
+#      - name: Build & push Docker image
+#        uses: mr-smithers-excellent/docker-build-push@v5
+#        with:
+#          image: tugjabg/book-store-payment-service
+#          tags: latest
+#          registry: docker.io
+#          dockerfile: payment-service/Dockerfile
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
