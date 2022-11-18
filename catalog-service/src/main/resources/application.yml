@@ -82,16 +82,16 @@ management:
   security:
     enabled: false
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: https://ef40-2402-800-61b1-9a2c-c474-bcbe-98c0-1b15.ap.ngrok.io
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: https://ef40-2402-800-61b1-9a2c-c474-bcbe-98c0-1b15.ap.ngrok.io
 
 cloud:
   aws:
     credentials:
-      access-key: AKIATSR2NBN46TPXIG5W
-      secret-key: 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
+      access-key: AKIA5XGMW6FNRPRICJK3
+      secret-key: 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
 #      access-key: MJAAJXUVR8UX3K789PMF
 #      secret-key: V56i2LOGxYtcWiDWEwSTQlxi8CMh4NhWm8cePRs5
     region:
@@ -101,4 +101,4 @@ cloud:
 
 application:
   bucket:
-    name: phuc-bookstore
+    name: bookstore-service

@@ -1,5 +1,7 @@
 package com.bookstore.orderservice.controller;
 
+import com.bookstore.orderservice.common.response.CommonResult;
+import com.bookstore.orderservice.dao.CartDAO;
 import com.bookstore.orderservice.service.CartService;
 import com.bookstore.orderservice.vo.response.CreateCartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +32,8 @@ public class CartController {
     }
     
     @GetMapping("/cart")
-    public ResponseEntity<?> getCart(){
-    
-        return ResponseEntity.ok(cartService.getCart());
-        
+    public CommonResult<CartDAO> getCart(){
+        return CommonResult.success(cartService.getCart());
     }
 
 }

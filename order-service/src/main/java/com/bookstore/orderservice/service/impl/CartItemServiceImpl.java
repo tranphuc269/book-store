@@ -77,16 +77,16 @@ public class CartItemServiceImpl implements CartItemService {
 //                .productName("Sách nói")
 //                .description("Hello world")
 //                .build();
-        if (cartItemRequest.getQuantity() > getProductResponse.getAvailableItemCount()) {
-            throw new RuntimeException("Quantity is greater than available item count!");
-        }
+//        if (cartItemRequest.getQuantity() > getProductResponse.getAvailableItemCount()) {
+//            throw new RuntimeException("Quantity is greater than available item count!");
+//        }
         //If the product already exists in the cart, update its quantity and itemPrice.
         if (cartByUserId.getCartItemDAOS() != null) {
             for (CartItemDAO ci : cartByUserId.getCartItemDAOS()) {
-                if (getProductResponse.getProductId().equals(ci.getProductId())) {
+                if (getProductResponse.getData().getProductId().equals(ci.getProductId())) {
                     ci.setQuantity(cartItemRequest.getQuantity());
-                    ci.setItemPrice(getProductResponse.getPrice());
-                    ci.setExtendedPrice(ci.getQuantity() * getProductResponse.getPrice());
+                    ci.setItemPrice(getProductResponse.getData().getPrice());
+                    ci.setExtendedPrice(ci.getQuantity() * getProductResponse.getData().getPrice());
                     cartItemRepository.save(ci);
                     return;
                 }
@@ -95,13 +95,12 @@ public class CartItemServiceImpl implements CartItemService {
         //If cart doesn't have any cartItems, then create cartItems.
         CartItemDAO cartItem = CartItemDAO.builder()
                 .cart(cartByUserId)
-                .itemPrice(getProductResponse.getPrice())
-                .extendedPrice(cartItemRequest.getQuantity() * getProductResponse.getPrice())
+                .itemPrice(getProductResponse.getData().getPrice())
+                .extendedPrice(cartItemRequest.getQuantity() * getProductResponse.getData().getPrice())
                 .quantity(cartItemRequest.getQuantity())
-                .productId(getProductResponse.getProductId())
-                .productName(getProductResponse.getProductName())
+                .productId(getProductResponse.getData().getProductId())
+                .productName(getProductResponse.getData().getProductName())
                 .build();
-
         cartItemRepository.save(cartItem);
 
 

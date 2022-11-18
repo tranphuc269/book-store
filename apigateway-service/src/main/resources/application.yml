@@ -63,12 +63,12 @@ spring:
 server:
   port: ${port:8900}
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://ec2-54-153-36-214.us-west-1.compute.amazonaws.com:8761/eureka
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://ec2-54-153-36-214.us-west-1.compute.amazonaws.com:8761/eureka
 
 
 management:

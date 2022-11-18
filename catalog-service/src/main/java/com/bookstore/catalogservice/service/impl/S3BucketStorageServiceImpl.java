@@ -39,6 +39,8 @@ public class S3BucketStorageServiceImpl implements S3BucketStorageService {
         PutObjectResult putObjectResult = amazonS3
                 .putObject(new PutObjectRequest(bucketName, fileName, fileObj));
         fileObj.delete();
+        System.out.println("putObjectResult : " + putObjectResult.toString());
+
         if (Objects.nonNull(putObjectResult)) {
             return fileName;
         }

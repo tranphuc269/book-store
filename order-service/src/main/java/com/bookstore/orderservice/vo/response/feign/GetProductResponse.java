@@ -11,12 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetProductResponse {
-
-    private String productId;
-    private String productName;
-    private String description;
-    private double price;
-    private String productCategory;
-    private int availableItemCount;
-
+    int code;
+    String message;
+    GetProductData data;
 }
