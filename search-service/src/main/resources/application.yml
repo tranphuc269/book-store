@@ -34,3 +34,9 @@ api:
   elasticsearch:
     uri: http://localhost:9200/
     search: _search
+
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: prometheus

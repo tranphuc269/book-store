@@ -9,6 +9,7 @@
         <module name="auth-service" />
         <module name="payment-service" />
         <module name="apigateway-service" />
+        <module name="search-service" />
         <module name="catalog-service" />
         <module name="order-service" />
         <module name="discovery-service" />
@@ -23,6 +24,7 @@
       <module name="discovery-service" target="11" />
       <module name="order-service" target="11" />
       <module name="payment-service" target="11" />
+      <module name="search-service" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -34,6 +36,7 @@
       <module name="discovery-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />
+      <module name="search-service" options="-parameters" />
     </option>
   </component>
 </project>
