@@ -56,6 +56,10 @@ public class ProductServiceImpl implements ProductService {
                 .category(categoryDAO)
                 .images(createProductRequest.getImage().toString())
                 .producer(producerDAO)
+                .author(createProductRequest.getAuthor())
+                .weight(createProductRequest.getWeight())
+                .dimension(createProductRequest.getDimension())
+                .pageCount(createProductRequest.getPageCount())
                 .build();
 
 
@@ -81,6 +85,10 @@ public class ProductServiceImpl implements ProductService {
                     .noOfRatings(reviews.size())
                     .producerId(productDAO.getProducer().getProducerId())
                     .producerName(productDAO.getProducer().getProducerName())
+                    .author(productDAO.getAuthor())
+                    .weight(productDAO.getWeight())
+                    .dimension(productDAO.getDimension())
+                    .pageCount(productDAO.getPageCount())
                     .averageRating(reviews.stream()
                             .mapToDouble(ReviewDAO::getRatingValue)
                             .average()
@@ -154,6 +162,10 @@ public class ProductServiceImpl implements ProductService {
                     .producerId(v.getProducer().getProducerId())
                     .productName(v.getProductName())
                     .productId(v.getProductId())
+                    .author(v.getAuthor())
+                    .weight(v.getWeight())
+                    .dimension(v.getDimension())
+                    .pageCount(v.getPageCount())
                     .description(v.getDescription())
                     .price(v.getPrice())
                     .availableItemCount(v.getAvailableItemCount())

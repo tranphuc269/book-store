@@ -7,11 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.springframework.data.annotation.AccessType;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -25,8 +23,7 @@ import java.io.Serializable;
 public class CategoryDAO extends DateAudit implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "category_id", updatable = false, nullable = false)
     private String categoryId;
 
@@ -34,21 +31,21 @@ public class CategoryDAO extends DateAudit implements Serializable {
     private String categoryName;
 
     private String description;
-    @Column(name = "img_url", columnDefinition = "TEXT")
+    @Column(name = "img_url", columnDefinition = "TEXT", length = 100000)
     private String imgUrl;
-//
-//    @Id
-//    @AccessType(AccessType.Type.PROPERTY)
-//    public String getId() {
-//        return categoryId;
-//    }
-//    public void setId(String categoryId) {
-//        this.categoryId = categoryId;
-//    }
-//    public String getCategoryId() {
-//        return categoryId;
-//    }
-//    public void setCategoryId(String categoryId) {
-//        this.categoryId = categoryId;
-//    }
+
+    @Id
+    @AccessType(AccessType.Type.PROPERTY)
+    public String getId() {
+        return categoryId;
+    }
+    public void setId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+    public String getCategoryId() {
+        return categoryId;
+    }
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
 }

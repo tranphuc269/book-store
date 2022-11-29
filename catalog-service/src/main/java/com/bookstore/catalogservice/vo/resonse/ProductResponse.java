@@ -24,6 +24,10 @@ public class ProductResponse {
     private String categoryId;
     private String producerId;
     private String producerName;
+    private String author;
+    private String weight;
+    private String dimension;
+    private int pageCount;
     private int availableItemCount;
     private Double averageRating;
     private int noOfRatings;

@@ -28,6 +28,7 @@ public class BannerServiceImpl implements BannerService {
                 .navigation(createBannerRequest.getNavigation())
                 .build();
         bannerDAO.setStatus(ObjectStatus.ACTIVE.name());
+        System.out.println("bannerDAO + " + bannerDAO);
         BannerDAO bannerCreate = bannerRepository.save(bannerDAO);
         return BannerResponse
                 .builder()

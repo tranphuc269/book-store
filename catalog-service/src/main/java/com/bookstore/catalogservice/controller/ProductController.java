@@ -59,7 +59,13 @@ public class ProductController {
                                               @RequestParam(name = "categoryId") String categoryId,
                                               @RequestParam(name = "producerId") String producerId,
                                               @RequestParam(name = "availableItemCount") int availableItemCount,
-                                              @RequestParam(name = "files") MultipartFile[] files
+                                              @RequestParam(name = "files") MultipartFile[] files,
+                                              @RequestParam(name = "author") String author,
+                                              @RequestParam(name = "dimension") String dimension,
+                                              @RequestParam(name = "weight") String weight,
+                                              @RequestParam(name = "pageCount") int pageCount
+
+
     ) {
         CreateProductRequest
                 createProductRequest = CreateProductRequest
@@ -71,6 +77,10 @@ public class ProductController {
                 .price(price)
                 .categoryId(categoryId)
                 .producerId(producerId)
+                .author(author)
+                .dimension(dimension)
+                .pageCount(pageCount)
+                .weight(weight)
                 .build();
         for (MultipartFile file : files) {
             String imgUrl = s3BucketStorageService.uploadFileToS3(file);

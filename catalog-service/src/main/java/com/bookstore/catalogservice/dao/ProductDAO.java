@@ -47,6 +47,14 @@ public class ProductDAO extends DateAudit {
     @Column(name = "images", columnDefinition = "TEXT")
     private String images;
 
+    @Column(name = "author", columnDefinition = "TEXT")
+    private String author;
+    @Column(name = "weight", columnDefinition = "TEXT")
+    private String weight;
+    @Column(name = "dimension", columnDefinition = "TEXT")
+    private String dimension;
+    @Column(name = "page_count")
+    private int pageCount;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryDAO category;
@@ -57,6 +65,7 @@ public class ProductDAO extends DateAudit {
 
     @Column(name = "available_item_count")
     private int availableItemCount;
+
 
     public String getCategoryName() {
         return category.getCategoryName();
@@ -78,10 +87,15 @@ public class ProductDAO extends DateAudit {
                 .productName(product.getProductName())
                 .description(product.getDescription())
                 .averageRating(0.0)
+                .author(product.getAuthor())
                 .categoryName(product.getCategoryName())
                 .categoryId(product.getCategoryId())
                 .producerId(product.getProducer().getProducerId())
                 .producerName(product.getProducer().getProducerName())
+                .author(product.getAuthor())
+                .weight(product.getWeight())
+                .dimension(product.getDimension())
+                .pageCount(product.getPageCount())
                 .build();
     }
 

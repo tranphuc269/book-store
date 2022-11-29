@@ -36,6 +36,14 @@ public class CreateProductRequest {
     @NotEmpty(message = "category id should not be empty!")
     private String producerId;
 
+    private String author;
+
     private int availableItemCount;
+
+    private String weight;
+
+    private String dimension;
+
+    private int pageCount;
 
 }

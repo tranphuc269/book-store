@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -31,6 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
             @Valid CreateCategoryRequest createCategoryRequest) {
 
         CategoryDAO categoryDAO = CategoryDAO.builder()
+                .categoryId(UUID.randomUUID().toString())
                 .categoryName(createCategoryRequest.getCategoryName())
                 .description(createCategoryRequest.getDescription())
                 .imgUrl(createCategoryRequest.getImgUrl())
@@ -42,7 +44,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getCategory(String categoryId) {
-        System.out.println("categoryId : " + categoryId);
         Optional<CategoryDAO> categoryDAOOptional = categoryRepository.findById(categoryId);
 
         if (categoryDAOOptional.isEmpty()) {
@@ -114,16 +115,11 @@ public class CategoryServiceImpl implements CategoryService {
         } else {
             Sort.Order order;
 
-            try {
-                String[] split = sort.split(",");
+            String[] split = sort.split(",");
 
-                Sort.Direction sortDirection = Sort.Direction.fromString(split[1]);
-                order = new Sort.Order(sortDirection, split[0]).ignoreCase();
-                pageable = PageRequest.of(page, size, Sort.by(order));
-
-            } catch (Exception e) {
-                throw new RuntimeException("Not a valid sort value, It should be 'fieldName,direction', example : 'category,asc");
-            }
+            Sort.Direction sortDirection = Sort.Direction.fromString(split[1]);
+            order = new Sort.Order(sortDirection, split[0]).ignoreCase();
+            pageable = PageRequest.of(page, size, Sort.by(order));
 
         }
         Page<CategoryDAO> entities = categoryRepository.findAll(pageable);

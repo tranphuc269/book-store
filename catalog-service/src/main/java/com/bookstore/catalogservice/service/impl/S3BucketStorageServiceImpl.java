@@ -1,16 +1,14 @@
 package com.bookstore.catalogservice.service.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 import com.bookstore.catalogservice.service.S3BucketStorageService;
 import org.slf4j.Logger;
@@ -33,18 +31,17 @@ public class S3BucketStorageServiceImpl implements S3BucketStorageService {
 
     @Override
     public String uploadFileToS3(MultipartFile file) {
-        String uploadMessage = "File upload failed";
         File fileObj = convertMultiPartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        PutObjectResult putObjectResult = amazonS3
-                .putObject(new PutObjectRequest(bucketName, fileName, fileObj));
-        fileObj.delete();
-        System.out.println("putObjectResult : " + putObjectResult.toString());
 
-        if (Objects.nonNull(putObjectResult)) {
-            return fileName;
-        }
-        return uploadMessage;
+        var metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getSize());
+        metadata.setContentType(file.getContentType());
+
+        amazonS3
+                .putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        amazonS3.setObjectAcl(bucketName, fileName, CannedAccessControlList.PublicRead);
+        return "https://bookstore-service.s3.ap-southeast-1.amazonaws.com/" + fileName;
     }
 
     @Override
