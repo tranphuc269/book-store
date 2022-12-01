@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -46,6 +48,9 @@ public class CartItemDAO extends DateAudit {
 
     @Column(name = "product_name", nullable = false)
     private String productName;
+
+    @Column(name = "images")
+    private String images;
     
     @ManyToOne
     @JoinColumn(name = "cart_id")
@@ -57,7 +62,13 @@ public class CartItemDAO extends DateAudit {
         this.cart.dismissChild(this); //SYNCHRONIZING THE OTHER SIDE OF RELATIONSHIP
         this.cart = null;
     }
-    
+
+
+    public List<String> getListImages() {
+        List<String> imgs = new ArrayList<>(List.of(this.getImages().replace(']', ' ').replace('[', ' ').trim().split(",")));
+        imgs.replaceAll(String::trim);
+        return imgs;
+    }
     @Override
     public String toString() {
         return "CartItem{" +

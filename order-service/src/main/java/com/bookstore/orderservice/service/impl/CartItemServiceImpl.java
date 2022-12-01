@@ -68,18 +68,6 @@ public class CartItemServiceImpl implements CartItemService {
         }
 
         GetProductResponse getProductResponse = catalogFeignClient.getProduct(cartItemRequest.getProductId());
-//        GetProductResponse getProductResponse = GetProductResponse
-//                .builder()
-//                .productId("1")
-//                .availableItemCount(12)
-//                .productCategory("category")
-//                .price(5000)
-//                .productName("Sách nói")
-//                .description("Hello world")
-//                .build();
-//        if (cartItemRequest.getQuantity() > getProductResponse.getAvailableItemCount()) {
-//            throw new RuntimeException("Quantity is greater than available item count!");
-//        }
         //If the product already exists in the cart, update its quantity and itemPrice.
         if (cartByUserId.getCartItemDAOS() != null) {
             for (CartItemDAO ci : cartByUserId.getCartItemDAOS()) {
@@ -100,6 +88,7 @@ public class CartItemServiceImpl implements CartItemService {
                 .quantity(cartItemRequest.getQuantity())
                 .productId(getProductResponse.getData().getProductId())
                 .productName(getProductResponse.getData().getProductName())
+                .images(getProductResponse.getData().getImages().toString())
                 .build();
         cartItemRepository.save(cartItem);
 
