@@ -7,11 +7,15 @@ import lombok.NoArgsConstructor;
 
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetProductResponse {
-    int code;
-    String message;
-    GetProductData data;
+@Builder
+public class FeignUserInfoResponse {
+
+  private String userId;
+  private String userName;
+  private String firstName;
+  private String lastName;
+  private String email;
+
 }

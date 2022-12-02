@@ -1,12 +1,11 @@
-package com.bookstore.orderservice.vo.response;
+package com.bookstore.orderservice.vo.response.feign;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
 @Builder
-public class GetAddressResponse {
+public class FeignAddressResponse {
     private String addressId;
     private String userId;
     private String userName;

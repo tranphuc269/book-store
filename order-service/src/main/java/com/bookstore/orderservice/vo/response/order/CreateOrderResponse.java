@@ -1,4 +1,4 @@
-package com.bookstore.orderservice.vo.response;
+package com.bookstore.orderservice.vo.response.order;
 
 import com.bookstore.orderservice.dao.OrderBillingAddressDAO;
 import com.bookstore.orderservice.dao.OrderItemDAO;

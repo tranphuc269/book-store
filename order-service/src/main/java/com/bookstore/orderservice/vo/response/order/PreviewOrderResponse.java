@@ -1,6 +1,7 @@
-package com.bookstore.orderservice.vo.response;
+package com.bookstore.orderservice.vo.response.order;
 
 import com.bookstore.orderservice.dao.OrderItemDAO;
+import com.bookstore.orderservice.vo.response.feign.FeignAddressResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,8 @@ import java.util.List;
 @Builder
 public class PreviewOrderResponse {
     private List<OrderItemDAO> orderItems = new ArrayList<>();
-    private GetAddressResponse shippingAddress;
-    private GetAddressResponse billingAddress;
+    private FeignAddressResponse shippingAddress;
+    private FeignAddressResponse billingAddress;
     private Double itemsTotalPrice;
     private Double taxPrice;
     private Double shippingPrice;

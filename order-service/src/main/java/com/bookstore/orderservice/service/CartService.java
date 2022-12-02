@@ -1,6 +1,7 @@
 package com.bookstore.orderservice.service;
 
 import com.bookstore.orderservice.dao.CartDAO;
+import com.bookstore.orderservice.vo.response.cart.CartResponse;
 
 public interface CartService {
 

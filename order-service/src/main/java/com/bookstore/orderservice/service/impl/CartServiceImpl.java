@@ -6,12 +6,15 @@ import com.bookstore.orderservice.dao.CartDAO;
 import com.bookstore.orderservice.dao.CartItemDAO;
 import com.bookstore.orderservice.repository.CartRepository;
 import com.bookstore.orderservice.service.CartService;
+import com.bookstore.orderservice.vo.response.cart.CartItemResponse;
+import com.bookstore.orderservice.vo.response.cart.CartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -37,6 +40,7 @@ public class CartServiceImpl implements CartService {
                 .sum();
 
         cartDAO.get().setTotalPrice(totalPrice);
+
         return cartDAO.get();
     }
 
@@ -56,8 +60,8 @@ public class CartServiceImpl implements CartService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = CommonUtilityMethods.getUserIdFromToken(authentication);
         Optional<CartDAO> currentCartDAO = cartRepository.findCartByUserId(userId);
-        if(currentCartDAO.isPresent()){
-            return  currentCartDAO.get().getCartId();
+        if (currentCartDAO.isPresent()) {
+            return currentCartDAO.get().getCartId();
         }
         CartDAO cartDAO = CartDAO
                 .builder()

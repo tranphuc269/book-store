@@ -2,8 +2,8 @@ package com.bookstore.orderservice.service;
 
 import com.bookstore.orderservice.vo.request.CreateOrderRequest;
 import com.bookstore.orderservice.vo.request.PreviewOrderRequest;
-import com.bookstore.orderservice.vo.response.CreateOrderResponse;
-import com.bookstore.orderservice.vo.response.PreviewOrderResponse;
+import com.bookstore.orderservice.vo.response.order.CreateOrderResponse;
+import com.bookstore.orderservice.vo.response.order.PreviewOrderResponse;
 
 import java.util.List;
 

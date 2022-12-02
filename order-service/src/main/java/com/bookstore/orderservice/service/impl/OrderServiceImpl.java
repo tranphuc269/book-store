@@ -18,10 +18,10 @@ import com.bookstore.orderservice.utils.feign.PaymentType;
 import com.bookstore.orderservice.vo.request.CreateOrderRequest;
 import com.bookstore.orderservice.vo.request.PreviewOrderRequest;
 import com.bookstore.orderservice.vo.request.feign.CreatePaymentRequest;
-import com.bookstore.orderservice.vo.response.CreateOrderResponse;
-import com.bookstore.orderservice.vo.response.CreatePaymentResponse;
-import com.bookstore.orderservice.vo.response.GetAddressResponse;
-import com.bookstore.orderservice.vo.response.PreviewOrderResponse;
+import com.bookstore.orderservice.vo.response.order.CreateOrderResponse;
+import com.bookstore.orderservice.vo.response.feign.FeignPaymentResponse;
+import com.bookstore.orderservice.vo.response.feign.FeignAddressResponse;
+import com.bookstore.orderservice.vo.response.order.PreviewOrderResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         // tạo 1 order rỗng
         CreateOrderResponse createOrderResponse = new CreateOrderResponse();
         // tạo 1 địa chỉ bằng null
-        GetAddressResponse billingAddress = null;
+        FeignAddressResponse billingAddress = null;
         // nếu mà cái billing address id truyền lên khác null, cái này bắt từ phía client mới đúng -> tạo 1 cái billing address
         if (createOrderRequest.getBillingAddressId() != null && !createOrderRequest.getBillingAddressId().isEmpty()) {
             billingAddress = billingFeignClient.getAddressById(createOrderRequest.getBillingAddressId());
@@ -86,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
             createOrderResponse.setBillingAddress(orderBillingAddress);
         }
 
-        GetAddressResponse shippingAddress = null;
+        FeignAddressResponse shippingAddress = null;
         if (createOrderRequest.getShippingAddressId() != null && !createOrderRequest.getShippingAddressId().isEmpty()) {
             shippingAddress = billingFeignClient.getAddressById(createOrderRequest.getShippingAddressId());
             OrderShippingAddressDAO orderShippingAddressDAO = new OrderShippingAddressDAO();
@@ -141,9 +141,9 @@ public class OrderServiceImpl implements OrderService {
                 .orderId(cartDAO.getCartId()) // Cho cart id là duy nhất :))
                 .build();
         if(createPaymentRequest.getPaymentType().equals(PaymentType.VNPAY)){
-            CreatePaymentResponse createPaymentResponse = paymentFeignClient.doPayment(createPaymentRequest);
-            createOrderResponse.setPaymentUrl(createPaymentResponse.getUrlPayment());
-            if (createPaymentResponse.getPaymentType() == null) {
+            FeignPaymentResponse feignPaymentResponse = paymentFeignClient.doPayment(createPaymentRequest);
+            createOrderResponse.setPaymentUrl(feignPaymentResponse.getUrlPayment());
+            if (feignPaymentResponse.getPaymentType() == null) {
                 throw new RunTimeExceptionPlaceHolder(StringConstant.ERROR_TEXT);
             }
         }else{
@@ -203,12 +203,12 @@ public class OrderServiceImpl implements OrderService {
         PreviewOrderResponse previewOrderResponse = new PreviewOrderResponse();
 
         if (previewOrderRequest.getBillingAddressId() != null && !previewOrderRequest.getBillingAddressId().isEmpty()) {
-            GetAddressResponse billingAddress = billingFeignClient.getAddressById(previewOrderRequest.getBillingAddressId());
+            FeignAddressResponse billingAddress = billingFeignClient.getAddressById(previewOrderRequest.getBillingAddressId());
             previewOrderResponse.setBillingAddress(billingAddress);
         }
 
         if (previewOrderRequest.getShippingAddressId() != null && !previewOrderRequest.getShippingAddressId().isEmpty()) {
-            GetAddressResponse shippingAddress = billingFeignClient.getAddressById(previewOrderRequest.getShippingAddressId());
+            FeignAddressResponse shippingAddress = billingFeignClient.getAddressById(previewOrderRequest.getShippingAddressId());
             if (previewOrderRequest.getBillingAddressId() == null) {
                 previewOrderResponse.setBillingAddress(shippingAddress);
             }

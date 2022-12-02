@@ -9,8 +9,7 @@ import com.bookstore.orderservice.repository.CartItemRepository;
 import com.bookstore.orderservice.service.CartItemService;
 import com.bookstore.orderservice.service.CartService;
 import com.bookstore.orderservice.vo.request.CartItemRequest;
-import com.bookstore.orderservice.vo.response.feign.GetProductResponse;
-import com.google.common.collect.Iterables;
+import com.bookstore.orderservice.vo.response.feign.FeignProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,14 +65,14 @@ public class CartItemServiceImpl implements CartItemService {
             }
         }
 
-        GetProductResponse getProductResponse = catalogFeignClient.getProduct(cartItemRequest.getProductId());
+        FeignProductResponse feignProductResponse = catalogFeignClient.getProduct(cartItemRequest.getProductId());
         //If the product already exists in the cart, update its quantity and itemPrice.
         if (cartByUserId.getCartItemDAOS() != null) {
             for (CartItemDAO ci : cartByUserId.getCartItemDAOS()) {
-                if (getProductResponse.getData().getProductId().equals(ci.getProductId())) {
+                if (feignProductResponse.getData().getProductId().equals(ci.getProductId())) {
                     ci.setQuantity(cartItemRequest.getQuantity());
-                    ci.setItemPrice(getProductResponse.getData().getPrice());
-                    ci.setExtendedPrice(ci.getQuantity() * getProductResponse.getData().getPrice());
+                    ci.setItemPrice(feignProductResponse.getData().getPrice());
+                    ci.setExtendedPrice(ci.getQuantity() * feignProductResponse.getData().getPrice());
                     cartItemRepository.save(ci);
                     return;
                 }
@@ -83,12 +81,12 @@ public class CartItemServiceImpl implements CartItemService {
         //If cart doesn't have any cartItems, then create cartItems.
         CartItemDAO cartItem = CartItemDAO.builder()
                 .cart(cartByUserId)
-                .itemPrice(getProductResponse.getData().getPrice())
-                .extendedPrice(cartItemRequest.getQuantity() * getProductResponse.getData().getPrice())
+                .itemPrice(feignProductResponse.getData().getPrice())
+                .extendedPrice(cartItemRequest.getQuantity() * feignProductResponse.getData().getPrice())
                 .quantity(cartItemRequest.getQuantity())
-                .productId(getProductResponse.getData().getProductId())
-                .productName(getProductResponse.getData().getProductName())
-                .images(getProductResponse.getData().getImages().toString())
+                .productId(feignProductResponse.getData().getProductId())
+                .productName(feignProductResponse.getData().getProductName())
+                .images(feignProductResponse.getData().getImages().toString())
                 .build();
         cartItemRepository.save(cartItem);
 

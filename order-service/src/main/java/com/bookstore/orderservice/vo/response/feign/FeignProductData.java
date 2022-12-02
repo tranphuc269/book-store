@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetProductData {
+public class FeignProductData {
     private String productId;
     private String productName;
     private String description;
