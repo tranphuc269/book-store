@@ -94,8 +94,8 @@ management:
 cloud:
   aws:
     credentials:
-      access-key: AKIA5XGMW6FNRPRICJK3
-      secret-key: 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
+      access-key: MJAAJXUVR8UX3K789PMF
+      secret-key: V56i2LOGxYtcWiDWEwSTQlxi8CMh4NhWm8cePRs5
 #      access-key: MJAAJXUVR8UX3K789PMF
 #      secret-key: V56i2LOGxYtcWiDWEwSTQlxi8CMh4NhWm8cePRs5
     region:
