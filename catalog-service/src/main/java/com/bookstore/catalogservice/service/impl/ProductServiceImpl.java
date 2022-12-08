@@ -151,6 +151,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponse> getProductByProducerId(String producerId) {
         List<ProductDAO> productDaos = productRepository.getProductDAOSByProducerId(producerId);
+        return getProductResponses(productDaos);
+    }
+
+    @Override
+    public List<ProductResponse> getProductByCategoryId(String categoryId) {
+        List<ProductDAO> productDaos = productRepository.getProductDAOSByCategoryId(categoryId);
+        return getProductResponses(productDaos);
+    }
+
+    private List<ProductResponse> getProductResponses(List<ProductDAO> productDaos) {
         List<ProductResponse> products = new ArrayList<>();
         productDaos.forEach(v -> {
             List<ReviewDAO> reviews = reviewService.getReviewsForProduct(v.getProductId());

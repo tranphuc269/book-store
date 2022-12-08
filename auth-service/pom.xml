@@ -145,7 +145,12 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<repositories>
+		<repository>
+			<id>common</id>
+			<url>http://192.168.0.1/whatever/mavenserver/youwant/repo</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>

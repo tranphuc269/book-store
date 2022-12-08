@@ -96,7 +96,7 @@ public class ProductController {
     public CommonResult<ProductResponse> getProduct(@PathVariable("productId") String productId) {
 
         ProductResponse product = productService.getProduct(productId);
-
+        System.out.println("product : " + product);
         return CommonResult.success(product);
     }
 
@@ -135,11 +135,19 @@ public class ProductController {
     }
 
 
-    @GetMapping(value = "/products/product", produces = "application/json")
+    @GetMapping(value = "/products/producer", produces = "application/json")
     @Cacheable(value = "producerId", key = "#producerId")
     public CommonResult<List<ProductResponse>> getProductByProducerId(
             @RequestParam(value = "producerId", required = false) String producerId) {
         List<ProductResponse> productResponses = productService.getProductByProducerId(producerId);
+        return CommonResult.success(productResponses);
+    }
+
+    @GetMapping(value = "/products/category", produces = "application/json")
+    @Cacheable(value = "categoryId", key = "#categoryId")
+    public CommonResult<List<ProductResponse>> getProductsByCategoryId(
+            @RequestParam(value = "categoryId", required = false) String categoryId) {
+        List<ProductResponse> productResponses = productService.getProductByCategoryId(categoryId);
         return CommonResult.success(productResponses);
     }
 

@@ -46,5 +46,7 @@ public class OrderItemDAO extends DateAudit {
 
     @Column(name = "order_extended_price", nullable = false)
     private double orderExtendedPrice;
+
+
     
 }

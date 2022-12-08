@@ -25,6 +25,8 @@ public interface ProductService {
 
   List<ProductResponse> getProductByProducerId(String producerId);
 
+  List<ProductResponse> getProductByCategoryId(String categoryId);
+
   Page<ProductDAO> findAllProducts(Pageable pageable);
 
   Page<ProductResponse> getAllProducts(String sort, Integer page, Integer size);

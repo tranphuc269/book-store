@@ -45,7 +45,7 @@ spring:
 #    password: jerrytran97
     url: jdbc:mysql://localhost:3306/orderservicedb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
-    password: Jerrytran97@
+    password: 
 
 logging:
   level:

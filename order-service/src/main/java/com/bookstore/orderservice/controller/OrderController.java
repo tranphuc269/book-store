@@ -1,5 +1,6 @@
 package com.bookstore.orderservice.controller;
 
+import com.bookstore.orderservice.common.response.CommonResult;
 import com.bookstore.orderservice.service.OrderService;
 import com.bookstore.orderservice.vo.request.CreateOrderRequest;
 import com.bookstore.orderservice.vo.request.PreviewOrderRequest;
@@ -25,10 +26,10 @@ public class OrderController {
     OrderService orderService;
     
     @PostMapping("/order")
-    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest createOrderRequest) {
+    public CommonResult<CreateOrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest createOrderRequest) {
 
         CreateOrderResponse createOrderResponse = orderService.createOrder(createOrderRequest);
-        return ResponseEntity.ok(createOrderResponse);
+        return CommonResult.success(createOrderResponse);
     }
 
     @GetMapping("/order/{orderId}")

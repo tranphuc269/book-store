@@ -26,6 +26,7 @@ public class PaymentController {
     @PostMapping("/payment")
     public ResponseEntity<?> pay(@RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
         try {
+            System.out.println("paymentRequest : " + paymentRequest.toString());
             switch (paymentRequest.getPaymentType()) {
 
                 case VNPAY:

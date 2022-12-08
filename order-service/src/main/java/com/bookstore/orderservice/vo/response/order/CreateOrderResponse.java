@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 public class CreateOrderResponse {
     private String orderId;
-    private List<OrderItemDAO> orderItemDAOS = new ArrayList<>();
+    private List<OrderItemResponse> data = new ArrayList<>();
     private OrderShippingAddressDAO shippingAddress;
     private OrderBillingAddressDAO billingAddress;
     private Double itemsTotalPrice;

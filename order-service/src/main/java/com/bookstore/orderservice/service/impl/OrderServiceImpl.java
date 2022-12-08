@@ -21,6 +21,7 @@ import com.bookstore.orderservice.vo.request.feign.CreatePaymentRequest;
 import com.bookstore.orderservice.vo.response.order.CreateOrderResponse;
 import com.bookstore.orderservice.vo.response.feign.FeignPaymentResponse;
 import com.bookstore.orderservice.vo.response.feign.FeignAddressResponse;
+import com.bookstore.orderservice.vo.response.order.OrderItemResponse;
 import com.bookstore.orderservice.vo.response.order.PreviewOrderResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,10 +113,19 @@ public class OrderServiceImpl implements OrderService {
                     orderItem.setQuantity(cartItem.getQuantity());
                     /// set data
                     order.getOrderItemDAOS().add(orderItem); // dùng để save xuống db
-                    createOrderResponse.getOrderItemDAOS().add(orderItem);// dùng để response phía client
+                    OrderItemResponse item = OrderItemResponse
+                            .builder()
+                            .orderItemId(orderItem.getOrderItemId())
+                            .orderItemPrice(orderItem.getOrderItemPrice())
+                            .orderExtendedPrice(orderItem.getOrderExtendedPrice())
+                            .quantity(orderItem.getQuantity())
+                            .productId(orderItem.getProductId())
+                            .images(cartItem.getListImages())
+                            .build();
+                    createOrderResponse.getData().add(item);// dùng để response phía client
                 });
         // Giả sử thuế 10% trên tất cả sản phẩm
-        double itemsPrice = createOrderResponse.getOrderItemDAOS().stream().mapToDouble(OrderItemDAO::getOrderExtendedPrice).sum(); // tính tổng tiền sản phẩm
+        double itemsPrice = createOrderResponse.getData().stream().mapToDouble(OrderItemResponse::getOrderExtendedPrice).sum(); // tính tổng tiền sản phẩm
         createOrderResponse.setItemsTotalPrice(itemsPrice); // response
         order.setTotalItemsPrice(itemsPrice);// response
 
@@ -132,13 +142,22 @@ public class OrderServiceImpl implements OrderService {
         createOrderResponse.setTotalPrice(totalPrice);
         order.setTotalOrderPrice(totalPrice);
 
+
+
+
+        /// save to local
+        order.setPaid(false);
+        order.setPaymentDate(null);
+        order.setPaymentMethodType(createOrderRequest.getPaymentType().name());
+        OrderDAO save = orderRepository.save(order);
+
         //Do Payment
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest
                 .builder()
                 .amount((long) itemsPrice)
                 .paymentType(createOrderRequest.getPaymentType())
                 .information(createOrderRequest.getInformation())
-                .orderId(cartDAO.getCartId()) // Cho cart id là duy nhất :))
+                .orderId(save.getOrderId())
                 .build();
         if(createPaymentRequest.getPaymentType().equals(PaymentType.VNPAY)){
             FeignPaymentResponse feignPaymentResponse = paymentFeignClient.doPayment(createPaymentRequest);
@@ -149,13 +168,6 @@ public class OrderServiceImpl implements OrderService {
         }else{
             kafkaProducer.send(StringConstant.KAFKA_PAYMENT, createPaymentRequest);
         }
-
-        /// save to local
-        order.setPaid(false);
-        order.setPaymentDate(null);
-        order.setPaymentMethodType(createOrderRequest.getPaymentType().name());
-        OrderDAO save = orderRepository.save(order);
-
         if (billingAddress != null) {
             OrderBillingAddressDAO orderBillingAddress = OrderBillingAddressDAO.builder()
                     .userId(billingAddress.getUserId())
@@ -192,6 +204,7 @@ public class OrderServiceImpl implements OrderService {
         //set Payment info
         createOrderResponse.setPaid(false);
         createOrderResponse.setPaymentDate(null);
+        createOrderResponse.setPaymentType(createOrderRequest.getPaymentType().name());
         //Clear cart
         cartItemService.removeAllCartItems(cartDAO.getCartId());
 
@@ -261,10 +274,21 @@ public class OrderServiceImpl implements OrderService {
 
         OrderBillingAddressDAO billingAddress = orderBillingAddressRepository.findByOrderId(orderId);
         OrderShippingAddressDAO shippingAddress = orderShippingAddressRepository.findByOrderId(orderId);
+        List<OrderItemResponse> orderItemResponses = new ArrayList<>();
+        order.getOrderItemDAOS().forEach(v->{
+            orderItemResponses.add(OrderItemResponse
+                    .builder()
+                            .productId(v.getProductId())
+                            .orderItemId(v.getOrderItemId())
+                            .orderExtendedPrice(v.getOrderExtendedPrice())
+                            .orderItemPrice(v.getOrderItemPrice())
+                            .images(new ArrayList<>())
+                    .build());
+        });
 
-        CreateOrderResponse createOrderResponse = CreateOrderResponse.builder()
+        return CreateOrderResponse.builder()
                 .orderId(orderId)
-                .orderItemDAOS(order.getOrderItemDAOS())
+                .data(orderItemResponses)
                 .billingAddress(billingAddress)
                 .shippingAddress(shippingAddress)
                 .shippingPrice(order.getShippingPrice())
@@ -275,8 +299,6 @@ public class OrderServiceImpl implements OrderService {
                 .taxPrice(order.getTaxPrice())
                 .totalPrice(order.getTotalOrderPrice())
                 .build();
-
-        return createOrderResponse;
     }
 
     @Override
@@ -300,10 +322,20 @@ public class OrderServiceImpl implements OrderService {
             String orderId = o.getOrderId();
             OrderBillingAddressDAO billingAddress = orderBillingAddressRepository.findByOrderId(orderId);
             OrderShippingAddressDAO shippingAddress = orderShippingAddressRepository.findByOrderId(orderId);
-
+            List<OrderItemResponse> orderItemResponses = new ArrayList<>();
+            o.getOrderItemDAOS().forEach(v->{
+                orderItemResponses.add(OrderItemResponse
+                        .builder()
+                        .productId(v.getProductId())
+                        .orderItemId(v.getOrderItemId())
+                        .orderExtendedPrice(v.getOrderExtendedPrice())
+                        .orderItemPrice(v.getOrderItemPrice())
+                        .images(new ArrayList<>())
+                        .build());
+            });
             CreateOrderResponse createOrderResponse = CreateOrderResponse.builder()
                     .orderId(orderId)
-                    .orderItemDAOS(o.getOrderItemDAOS())
+                    .data(orderItemResponses)
                     .billingAddress(billingAddress)
                     .shippingAddress(shippingAddress)
                     .shippingPrice(o.getShippingPrice())
