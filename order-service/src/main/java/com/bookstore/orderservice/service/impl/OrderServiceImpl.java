@@ -1,6 +1,7 @@
 package com.bookstore.orderservice.service.impl;
 
 import com.bookstore.orderservice.common.exception.RunTimeExceptionPlaceHolder;
+import com.bookstore.orderservice.common.response.CommonResult;
 import com.bookstore.orderservice.common.util.CommonUtilityMethods;
 import com.bookstore.orderservice.dao.*;
 import com.bookstore.orderservice.feign.BillingFeignClient;
@@ -78,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         // tạo 1 order rỗng
         CreateOrderResponse createOrderResponse = new CreateOrderResponse();
         // tạo 1 địa chỉ bằng null
-        FeignAddressResponse billingAddress = null;
+        CommonResult<FeignAddressResponse> billingAddress = null;
         // nếu mà cái billing address id truyền lên khác null, cái này bắt từ phía client mới đúng -> tạo 1 cái billing address
         if (createOrderRequest.getBillingAddressId() != null && !createOrderRequest.getBillingAddressId().isEmpty()) {
             billingAddress = billingFeignClient.getAddressById(createOrderRequest.getBillingAddressId());
@@ -87,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
             createOrderResponse.setBillingAddress(orderBillingAddress);
         }
 
-        FeignAddressResponse shippingAddress = null;
+        CommonResult<FeignAddressResponse> shippingAddress = null;
         if (createOrderRequest.getShippingAddressId() != null && !createOrderRequest.getShippingAddressId().isEmpty()) {
             shippingAddress = billingFeignClient.getAddressById(createOrderRequest.getShippingAddressId());
             OrderShippingAddressDAO orderShippingAddressDAO = new OrderShippingAddressDAO();
@@ -115,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
                     order.getOrderItemDAOS().add(orderItem); // dùng để save xuống db
                     OrderItemResponse item = OrderItemResponse
                             .builder()
-                            .orderItemId(orderItem.getOrderItemId())
+                            .orderItemId(order.getOrderId())
                             .orderItemPrice(orderItem.getOrderItemPrice())
                             .orderExtendedPrice(orderItem.getOrderExtendedPrice())
                             .quantity(orderItem.getQuantity())
@@ -170,30 +171,28 @@ public class OrderServiceImpl implements OrderService {
         }
         if (billingAddress != null) {
             OrderBillingAddressDAO orderBillingAddress = OrderBillingAddressDAO.builder()
-                    .userId(billingAddress.getUserId())
-                    .userName(billingAddress.getUserName())
+                    .userId(billingAddress.getData().getUserId())
+                    .userName(billingAddress.getData().getUserName())
                     .orderId(save.getOrderId())
-                    .city(billingAddress.getCity())
-                    .city(billingAddress.getCity())
-                    .district(billingAddress.getDistrict())
-                    .province(billingAddress.getProvince())
-                    .detail(billingAddress.getDetail())
-                    .phoneNumber(billingAddress.getPhoneNumber())
+                    .city(billingAddress.getData().getCity())
+                    .district(billingAddress.getData().getDistrict())
+                    .province(billingAddress.getData().getProvince())
+                    .detail(billingAddress.getData().getDetail())
+                    .phoneNumber(billingAddress.getData().getPhoneNumber())
                     .build();
             orderBillingAddressRepository.save(orderBillingAddress);
         }
 
         if (shippingAddress != null) {
             OrderShippingAddressDAO orderShippingAddress = OrderShippingAddressDAO.builder()
-                    .userId(shippingAddress.getUserId())
-                    .userName(shippingAddress.getUserName())
+                    .userId(shippingAddress.getData().getUserId())
+                    .userName(shippingAddress.getData().getUserName())
                     .orderId(save.getOrderId())
-                    .city(shippingAddress.getCity())
-                    .city(shippingAddress.getCity())
-                    .district(shippingAddress.getDistrict())
-                    .province(shippingAddress.getProvince())
-                    .detail(shippingAddress.getDetail())
-                    .phoneNumber(shippingAddress.getPhoneNumber())
+                    .city(shippingAddress.getData().getCity())
+                    .district(shippingAddress.getData().getDistrict())
+                    .province(shippingAddress.getData().getProvince())
+                    .detail(shippingAddress.getData().getDetail())
+                    .phoneNumber(shippingAddress.getData().getPhoneNumber())
                     .build();
             orderShippingAddressRepository.save(orderShippingAddress);
         }
@@ -216,16 +215,16 @@ public class OrderServiceImpl implements OrderService {
         PreviewOrderResponse previewOrderResponse = new PreviewOrderResponse();
 
         if (previewOrderRequest.getBillingAddressId() != null && !previewOrderRequest.getBillingAddressId().isEmpty()) {
-            FeignAddressResponse billingAddress = billingFeignClient.getAddressById(previewOrderRequest.getBillingAddressId());
-            previewOrderResponse.setBillingAddress(billingAddress);
+            CommonResult<FeignAddressResponse> billingAddress = billingFeignClient.getAddressById(previewOrderRequest.getBillingAddressId());
+            previewOrderResponse.setBillingAddress(billingAddress.getData());
         }
 
         if (previewOrderRequest.getShippingAddressId() != null && !previewOrderRequest.getShippingAddressId().isEmpty()) {
-            FeignAddressResponse shippingAddress = billingFeignClient.getAddressById(previewOrderRequest.getShippingAddressId());
+            CommonResult<FeignAddressResponse> shippingAddress = billingFeignClient.getAddressById(previewOrderRequest.getShippingAddressId());
             if (previewOrderRequest.getBillingAddressId() == null) {
-                previewOrderResponse.setBillingAddress(shippingAddress);
+                previewOrderResponse.setBillingAddress(shippingAddress.getData());
             }
-            previewOrderResponse.setShippingAddress(shippingAddress);
+            previewOrderResponse.setShippingAddress(shippingAddress.getData());
         }
 
         CartDAO cart = cartService.getCart();

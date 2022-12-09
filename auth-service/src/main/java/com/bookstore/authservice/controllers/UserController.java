@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 
+import com.bookstore.authservice.common.response.CommonResult;
 import com.bookstore.authservice.service.UserService;
 import com.bookstore.authservice.vo.request.CreateUserRequest;
 import com.bookstore.authservice.vo.request.UpdateUserRequest;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import de.alpharogroup.service.rs.api.RestfulResource;
 
 
 @RestController
@@ -78,15 +80,15 @@ public class UserController {
 
   @GetMapping("/users")
   @PreAuthorize("hasAuthority('ADMIN_USER')")
-  public ResponseEntity<List<GetUserResponse>> getAllUsers() {
+  public CommonResult<List<GetUserResponse>> getAllUsers() {
     List<GetUserResponse> allUsers = userService.getAllUsers();
-    return ResponseEntity.ok(allUsers);
+    return CommonResult.success(allUsers);
   }
 
   @GetMapping("/userInfo")
-  public ResponseEntity<GetUserInfoResponse> getUserInfo() {
+  public CommonResult<GetUserInfoResponse> getUserInfo() {
     GetUserInfoResponse userInfo = userService.getUserInfo();
-    return new ResponseEntity<>(userInfo, HttpStatus.OK);
+    return CommonResult.success(userInfo);
   }
 
   @PutMapping("/userInfo")

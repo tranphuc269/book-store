@@ -1,5 +1,7 @@
 package com.bookstore.searchservice.controller;
 
+import com.bookstore.searchservice.common.response.CommonResult;
+import com.bookstore.searchservice.domain.dto.ProductDTO;
 import com.bookstore.searchservice.service.ISearchService;
 import com.bookstore.searchservice.utils.Constants;
 import com.bookstore.searchservice.utils.PathResources;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(PathResources.SEARCH_CONTROLLER)
@@ -27,7 +30,7 @@ public class SearchController {
     }
 
     @GetMapping(Constants.SEARCH_QUERY + "/{" + Constants.QUERY + "}")
-    public ResponseEntity<ResultQuery> searchQuery(@PathVariable String query) throws IOException, JSONException {
-        return new ResponseEntity<> (searchService.searchFromQuery(query.trim().toLowerCase()), HttpStatus.OK);
+    public CommonResult<List<ProductDTO>> searchQuery(@PathVariable String query) throws IOException, JSONException {
+        return CommonResult.success(searchService.searchFromQuery(query));
     }
 }

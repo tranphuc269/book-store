@@ -41,7 +41,7 @@ public class S3BucketStorageServiceImpl implements S3BucketStorageService {
         amazonS3
                 .putObject(new PutObjectRequest(bucketName, fileName, fileObj));
         amazonS3.setObjectAcl(bucketName, fileName, CannedAccessControlList.PublicRead);
-        return "https://bookstore-service.s3.ap-southeast-1.amazonaws.com/" + fileName;
+        return "https://"+bucketName+".s3.ap-southeast-1.amazonaws.com/" + fileName;
     }
 
     @Override

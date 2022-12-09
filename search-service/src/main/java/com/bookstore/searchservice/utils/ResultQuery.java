@@ -1,18 +1,26 @@
 package com.bookstore.searchservice.utils;
 
+import lombok.*;
+
+import java.util.List;
+
+
+@Getter
+@Setter
+@Builder
 public class ResultQuery {
 
     private Float timeTook;
     private Integer numberOfResults;
-    private String elements;
+    List<ProductQuery> products;
 
     public ResultQuery() {
     }
 
-    public ResultQuery(Float timeTook, Integer numberOfResults, String resultQuery) {
+    public ResultQuery(Float timeTook, Integer numberOfResults, List<ProductQuery> products) {
         this.timeTook = timeTook;
         this.numberOfResults = numberOfResults;
-        this.elements = resultQuery;
+        this.products = products;
     }
 
     public Float getTimeTook() {
@@ -29,14 +37,6 @@ public class ResultQuery {
 
     public void setNumberOfResults(Integer numberOfResults) {
         this.numberOfResults = numberOfResults;
-    }
-
-    public String getElements() {
-        return elements;
-    }
-
-    public void setElements(String elements) {
-        this.elements = elements;
     }
 
 }

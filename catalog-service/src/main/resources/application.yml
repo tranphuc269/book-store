@@ -94,8 +94,8 @@ management:
 cloud:
   aws:
     credentials:
-      access-key: MJAAJXUVR8UX3K789PMF
-      secret-key: V56i2LOGxYtcWiDWEwSTQlxi8CMh4NhWm8cePRs5
+      access-key: AKIATSR2NBN464YQ5UFA
+      secret-key: 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
 #      access-key: MJAAJXUVR8UX3K789PMF
 #      secret-key: V56i2LOGxYtcWiDWEwSTQlxi8CMh4NhWm8cePRs5
     region:
@@ -105,4 +105,4 @@ cloud:
 
 application:
   bucket:
-    name: bookstore-service
+    name: bookstore-image

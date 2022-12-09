@@ -1,6 +1,7 @@
 package com.bookstore.billingservice.controller;
 
 
+import com.bookstore.billingservice.common.response.CommonResult;
 import com.bookstore.billingservice.service.AddressService;
 import com.bookstore.billingservice.vo.request.CreateAddressRequest;
 import com.bookstore.billingservice.vo.request.UpdateAddressRequest;
@@ -42,15 +43,15 @@ public class AddressController {
     }
 
     @GetMapping("/address")
-    public ResponseEntity<List<GetAddressResponse>> getAddress() {
+    public CommonResult<List<GetAddressResponse>> getAddress() {
         List<GetAddressResponse> address = addressService.getAddress();
-        return ResponseEntity.ok(address);
+        return CommonResult.success(address);
     }
 
     @GetMapping("/address/{addressId}")
-    public ResponseEntity<GetAddressResponse> getAddressById(@PathVariable("addressId") String addressId) {
+    public CommonResult<GetAddressResponse> getAddressById(@PathVariable("addressId") String addressId) {
         GetAddressResponse address = addressService.getAddressById(addressId);
-        return ResponseEntity.ok(address);
+        return CommonResult.success(address);
     }
 
     @DeleteMapping("/address/{addressId}")

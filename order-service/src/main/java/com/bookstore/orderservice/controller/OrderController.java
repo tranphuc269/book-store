@@ -33,31 +33,31 @@ public class OrderController {
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<CreateOrderResponse> getOrderById(@PathVariable("orderId") String orderId) {
+    public CommonResult<CreateOrderResponse> getOrderById(@PathVariable("orderId") String orderId) {
 
         CreateOrderResponse createOrderResponse = orderService.getOrderById(orderId);
-        return ResponseEntity.ok(createOrderResponse);
+        return CommonResult.success(createOrderResponse);
     }
 
     @GetMapping("/order/myorders")
-    public ResponseEntity<List<CreateOrderResponse>> getMyOrders() {
+    public CommonResult<List<CreateOrderResponse>> getMyOrders() {
 
         List<CreateOrderResponse> createOrderResponse = orderService.getMyOrders();
-        return ResponseEntity.ok(createOrderResponse);
+        return CommonResult.success(createOrderResponse);
     }
 
     @GetMapping("/orders")
     @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public ResponseEntity<List<CreateOrderResponse>> getAllOrders() {
+    public CommonResult<List<CreateOrderResponse>> getAllOrders() {
         List<CreateOrderResponse> createOrderResponse = orderService.getAllOrders();
-        return ResponseEntity.ok(createOrderResponse);
+        return CommonResult.success(createOrderResponse);
     }
 
     @PostMapping("/previewOrder")
-    public ResponseEntity<PreviewOrderResponse> previewOrder(@RequestBody @Valid PreviewOrderRequest previewOrderRequest) {
+    public CommonResult<PreviewOrderResponse> previewOrder(@RequestBody @Valid PreviewOrderRequest previewOrderRequest) {
 
         PreviewOrderResponse previewOrderResponse = orderService.previewOrder(previewOrderRequest);
 
-        return ResponseEntity.ok(previewOrderResponse);
+        return CommonResult.success(previewOrderResponse);
     }
 }
